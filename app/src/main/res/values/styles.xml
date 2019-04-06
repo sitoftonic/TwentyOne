@@ -1,0 +1,35 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="android:windowBackground">@drawable/gradient_acid</item>
+        <item name="android:statusBarColor">@color/statusBar</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+
+        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
+    
+    <style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="background">@color/panelBack</item>
+    </style>
+
+    <style name="ActionBarTextAppearance" parent="@android:style/TextAppearance.Large">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">#ec1212</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="error_appearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/input_error</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+</resources>

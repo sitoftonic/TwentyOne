@@ -1,0 +1,164 @@
+<resources>
+    <string name="app_name">21-Points Heath</string>
+    <string name="app_bottom_title">@string/app_name</string>
+
+    <!--Launch Activity-->
+    <string name="imageContent">@string/app_name</string>
+    <string name="launch_login_button">Sign In</string>
+    <string name="launch_register_button">Register</string>
+
+    <!--Sign In Activity-->
+    <string name="login_title">Sign In</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_remember">Remember me</string>
+    <string name="login_button">Sign In</string>
+    <string name="login_forgot_password">Forgot your password?</string>
+    <string name="login_username_error_empty">Username can\'t be empty</string>
+    <string name="login_password_error_empty">Password can\'t be empty</string>
+    <string name="login_toast_success">Log In Successful</string>
+    <string name="login_toast_error">Authentication Error</string>
+
+    <!--Reset Password Dialog-->
+    <string name="dialog_reset_title">Reset Your Password</string>
+    <string name="dialog_reset_message">Enter the email address you used to register.</string>
+    <string name="dialog_reset_hint">Email</string>
+    <string name="dialog_reset_positive">Reset</string>
+    <string name="dialog_reset_negative">Cancel</string>
+
+    <!--Register Activity-->
+    <string name="register_title">Register</string>
+    <string name="register_username">Username</string>
+    <string name="register_email">Email</string>
+    <string name="register_password">Password</string>
+    <string name="register_password_repeat">Repeat Password</string>
+    <string name="register_button">Register</string>
+    <string name="register_username_error_empty">Username can\'t be empty</string>
+    <string name="register_email_error_empty">Email can\'t be empty</string>
+    <string name="register_password_error_empty">Password can\'t be empty</string>
+    <string name="register_password_error_match">Password should match</string>
+    <string name="register_toast_success">User Registered Successfully</string>
+    <string name="register_toast_error">Registration Error</string>
+
+    <!--Main Activity-->
+    <!--Main Menu-->
+    <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+
+    <!--About Dialog-->
+    <string name="dialog_about_title">About</string>
+    <string name="dialog_about_message">21-Points Health is an app you can use to monitor your health.</string>
+    <string name="dialog_about_p1">In late September through mid-October 2014, I\'d done a 21-Day Sugar Detox during which I stopped eating sugar, started exercising regularly, and stopped drinking alcohol. I\'d had high blood pressure for over 10 years and was on blood-pressure medication at the time. During the first week of the detox, I ran out of blood-pressure medication. Since a new prescription required a doctor visit, I decided I\'d wait until after the detox to get it. After three weeks, not only did I lose 15 pounds, but my blood pressure was at normal levels! </string>
+    <string name="dialog_about_p2">Before I started the detox, I came up with a 21-point system to see how healthy I was being each week. Its rules were simple: you can earn up to three points per day for the following reasons: </string>
+    <string name="dialog_about_p2_1">1. If you eat healthy, you get a point. Otherwise, zero.</string>
+    <string name="dialog_about_p2_2">2. If you exercise, you get a point.</string>
+    <string name="dialog_about_p2_3">3. If you don\'t drink alcohol, you get a point.</string>
+    <string name="dialog_about_p3">I was surprised to find I got eight points the first week I used this system. During the detox, I got 16 points the first week, 20 the second, and 21 the third. Before the detox, I thought eating healthy meant eating anything except fast food. After the detox, I realized that eating healthy for me meant eating no sugar. I\'m also a big lover of craft beer, so I modified the alcohol rule to allow two healthier alcohol drinks (like a greyhound or red wine) per day. </string>
+    <string name="dialog_about_p4">My goal is to earn 15 points per week. I find that if I get more, I\'ll likely lose weight and have good blood pressure. If I get fewer than 15, I risk getting sick. I\'ve been tracking my health like this since September 2014. I\'ve lost 30 pounds and my blood pressure has returned to and maintained normal levels. I haven\'t had good blood pressure since my early 20s, so this has been a life changer for me. </string>
+    <string name="dialog_about_p5">Matt Raible in The JHipster Mini-Book</string>
+
+    <!--Settings Activity-->
+    <string name="settings_title">Settings</string>
+
+    <!--Bottom Nav-->
+    <string name="nav_title_home">Home</string>
+    <string name="nav_title_history">History</string>
+    <string name="nav_title_entities">Entities</string>
+    <string name="nav_title_account">Account</string>
+
+    <!--Home Fragment-->
+    <string name="home_welcome">Welcome</string>
+    <string name="home_subtitle">21-Points Health is here to track your health and improve your life.</string>
+
+    <string name="home_points_title">Points</string>
+    <string name="home_points_empty">No points yet this week, better get moving!</string>
+
+    <string name="home_blood_title">Blood Pressure</string>
+    <string name="home_blood_empty">No blood pressure readings found.</string>
+
+    <string name="home_weight_title">Weight</string>
+    <string name="home_weight_empty">No weight-ins found.</string>
+
+
+    <!--History Fragment-->
+
+    <!--Entities Fragment-->
+    <string name="entities_tab_points">Points</string>
+    <string name="entities_tab_weight">Weight</string>
+    <string name="entities_tab_blood">Blood</string>
+    <string name="entities_tab_preferences">Prefs</string>
+
+    <!--Points-->
+    <string name="points_search">Search for Points</string>
+
+    <!--Add Points-->
+    <string name="add_points_title">Add Points</string>
+    <string name="add_points_date">Date</string>
+    <string name="add_points_exercise">Did you exercise?</string>
+    <string name="add_points_eat">Did you eat well?</string>
+    <string name="add_points_drink">Did you drink responsibly?</string>
+    <string name="add_points_notes">Notes</string>
+    <string name="add_points_user">User</string>
+    <string name="add_points_save">Save</string>
+    <string name="add_points_cancel">Cancel</string>
+
+    <!--Blood Presure-->
+    <string name="blood_search">Search for Blood Pressure</string>
+
+    <!--Add Blood Pressure-->
+    <string name="add_blood_title">Add Blood Pressure</string>
+    <string name="add_blood_date">Date/Title</string>
+    <string name="add_blood_systolic">Systolic</string>
+    <string name="add_blood_diastolic">Diastolic</string>
+    <string name="add_blood_user">User</string>
+    <string name="add_blood_save">Save</string>
+    <string name="add_blood_cancel">Cancel</string>
+
+    <!--Weight-->
+    <string name="weight_search">Search for Weight</string>
+
+    <!--Add Weight-->
+    <string name="add_weight_title">Add Weight</string>
+    <string name="add_weight_date">Date/Title</string>
+    <string name="add_weight_weight">Weight</string>
+    <string name="add_weight_user">User</string>
+    <string name="add_weight_save">Save</string>
+    <string name="add_weight_cancel">Cancel</string>
+
+    <!--Preferences-->
+    <string name="preferences_search">Search for Preferences</string>
+
+    <!--Add Preferences-->
+    <string name="add_preferences_title">Add Preferences</string>
+    <string name="add_preferences_goals">Weekly Points Goals</string>
+    <string name="add_preferences_units">Weight Units</string>
+    <string name="add_preferences_user">User</string>
+    <string name="add_preferences_save">Save</string>
+    <string name="add_preferences_cancel">Cancel</string>
+
+    <!--Account Fragment-->
+    <string name="logout_button">Log Out</string>
+
+
+    <string name="fab_add_points">Points</string>
+    <string name="fab_add_blood">Blood</string>
+    <string name="fab_add_weight">Weight</string>
+    <string name="fab_add_preferences">Preferences</string>
+
+
+
+    <string-array name="languages">
+        <item>English</item>
+        <item>French</item>
+        <item>Spanish</item>
+    </string-array>
+
+    <string name="ipsum">
+        Lorem ipsum dolor sit amet consectetur adipiscing elit cras rhoncus commodo non sociosqu feugiat nam enim sed maecenas auctor, varius mus posuere nisl senectus class purus aptent est convallis velit primis tristique ad ultrices semper iaculis. Sodales eu interdum integer lacinia ac pharetra dictumst morbi ridiculus tempor neque, praesent viverra habitasse gravida eros nisi vestibulum montes senectus imperdiet primis, ultrices potenti aenean phasellus ante penatibus class etiam taciti maecenas. Mauris tristique lobortis ac ornare aptent habitasse nam fusce in pulvinar scelerisque iaculis parturient libero condimentum aliquet augue, eu venenatis quisque justo vestibulum dictum accumsan ultricies imperdiet dignissim natoque ultrices arcu nostra sapien.
+    </string>
+
+    <string name="ipsum1">
+        Massa dui fames morbi metus consequat auctor etiam cras hendrerit sollicitudin, conubia vulputate montes leo primis ante tempor vehicula ac, sagittis ad id taciti vel et sociis faucibus aenean. Habitasse vestibulum netus vehicula sociosqu nulla massa suscipit condimentum, venenatis mollis imperdiet nascetur eget est conubia, dapibus placerat purus maecenas molestie nullam inceptos. Facilisi ad elementum tempus eget id nisi tellus habitant, ullamcorper semper pellentesque conubia lobortis curabitur suspendisse, turpis luctus cubilia leo penatibus libero sem.
+    </string>
+
+</resources>

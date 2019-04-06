@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <color name="colorPrimary">#37ecba</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>   <!--#D81B60-->
+    <color name="statusBar">#A4000000</color>
+
+    <color name="colorOnPrimary">#D81B60</color>
+
+    <color name="panelBack">#52000000</color>
+    <color name="lowBar">#A4000000</color>
+
+    <color name="input_error">#D81B60</color>
+
+    <color name="white">#A3FFFFFF</color>
+
+    <color name="topBar">#7A000000</color>
+    <color name="accountPane">#A3FFFFFF</color>
+
+    <color name="colorGradientStart">#D9FF43</color>
+    <color name="colorGradientCenter">#F67831</color>
+    <color name="colorGradientEnd">#FF1493</color>
+
+
+</resources>

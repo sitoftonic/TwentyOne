@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Category 1"
+        android:key="pref_key_storage_settings"
+        >
+    </PreferenceCategory>
+
+    <SwitchPreference
+        android:key="pref_key_haptic"
+        android:title="Haptic Feedback"
+        android:summary="Vibrate on user interaction"
+        android:defaultValue="false"
+        android:icon="@drawable/ic_round_vibration_24px" />
+
+</PreferenceScreen>
