@@ -6,6 +6,7 @@ import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
@@ -14,11 +15,6 @@ import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.example.twentyone.restapi.callback.RegisterAPICallBack;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,9 +29,6 @@ public class RestAPIManager {
     private Retrofit retrofit;
     private RestAPIService restApiService;
     private UserToken userToken;
-
-    private List<Points> pointsList,pointsListByUser;
-    private List<BloodPressure> bloodList;
 
     public static RestAPIManager getInstance() {
         if (ourInstance == null) {
@@ -130,7 +123,7 @@ public class RestAPIManager {
             public void onResponse(Call<Void> call, Response<Void> response) {
 
                 if (response.isSuccessful()) {
-                    registerAPICallback.onSuccess();
+                    registerAPICallback.onRegisterSuccess();
                 } else {
                     registerAPICallback.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
@@ -186,6 +179,73 @@ public class RestAPIManager {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void onCheckUserExistence(String username, final AccountAPICallBack accountAPICallBack){
+        Log.d("LOLO", "username check existence");
+        String query = new StringBuilder().append("SELECT * FROM JHI_USER WHERE LOGIN = '" + username + "'").toString();
+
+        Call<User> call = restApiService.checkUserExistence(query);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    accountAPICallBack.onCheckEmailExistence(user);
+                } else {
+                    accountAPICallBack.onUsernameFailed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void onCheckEmailExistence(String email, final AccountAPICallBack accountAPICallBack){
+        Log.d("LOLO", "email check existence");
+        String query = new StringBuilder().append("SELECT * FROM JHI_USER WHERE EMAIL = '" + email + "'").toString();
+
+        Call<User> call = restApiService.checkUserExistence(query);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    accountAPICallBack.onUserIsAbleToBeCreated();
+                } else {
+                    accountAPICallBack.onEmailFailed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void getAllBloodPressure(final BloodAPICallBack bloodAPICallBack) {
+        Log.d("LRM", "all points GET request");
+
+        Call<BloodPressure> call = restApiService.getAllBloodPressure("Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<BloodPressure>() {
+            @Override
+            public void onResponse(Call<BloodPressure> call, Response<BloodPressure> response) {
+                if (response.isSuccessful()) {
+                    bloodAPICallBack.onGetAllBloodPressure();
+                } else {
+                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure> call, Throwable t) {
+                bloodAPICallBack.onFailure(t);
             }
         });
     }

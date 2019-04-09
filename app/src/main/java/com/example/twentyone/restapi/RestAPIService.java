@@ -5,6 +5,7 @@ import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 
@@ -33,6 +34,8 @@ public interface RestAPIService {
     Call<Points[]> getAllPoints(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @POST("/api/account/change-password")
     Call<Void> changePassword(@Body PasswordChange passwordChange, @Header("Authorization") String token);
+    @GET("/api/_search/users/{query}")
+    Call<User> checkUserExistence(@Path("query") String query);
     @GET("/api/_search/points")
     Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     //@GET("/api/_search/points")
