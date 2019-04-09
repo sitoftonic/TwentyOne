@@ -15,6 +15,8 @@ import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.example.twentyone.restapi.callback.RegisterAPICallBack;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -203,47 +205,64 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void onCheckUserExistence(String username, final AccountAPICallBack accountAPICallBack){
+    public synchronized void onCheckUserExistence(final String username, final AccountAPICallBack accountAPICallBack){
         Log.d("LOLO", "username check existence");
         String query = new StringBuilder().append("SELECT * FROM JHI_USER WHERE LOGIN = '" + username + "'").toString();
 
-        Call<User> call = restApiService.checkUserExistence(query);
-        call.enqueue(new Callback<User>() {
+        Call<ArrayList<User>> call = restApiService.checkUserExistence(query, "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<ArrayList<User>>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<ArrayList<User>> call, Response<ArrayList<User>> response) {
                 if (response.isSuccessful()) {
-                    User user = response.body();
-                    accountAPICallBack.onCheckEmailExistence(user);
+                    ArrayList<User> users = response.body();
+                    for (User u : users) {
+                        if (u.getLogin().equals(username)){
+                            accountAPICallBack.onUsernameFailed();
+                            return;
+                        }
+                    }
+
+                    accountAPICallBack.onCheckEmailExistence();
+
+
                 } else {
-                    accountAPICallBack.onUsernameFailed();
+                    accountAPICallBack.onFailure();
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<ArrayList<User>> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
             }
         });
     }
 
-    public synchronized void onCheckEmailExistence(String email, final AccountAPICallBack accountAPICallBack){
+    public synchronized void onCheckEmailExistence(final String email, final AccountAPICallBack accountAPICallBack){
         Log.d("LOLO", "email check existence");
         String query = new StringBuilder().append("SELECT * FROM JHI_USER WHERE EMAIL = '" + email + "'").toString();
 
-        Call<User> call = restApiService.checkUserExistence(query);
-        call.enqueue(new Callback<User>() {
+        Call<ArrayList<User>> call = restApiService.checkUserExistence(query, "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<ArrayList<User>>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<ArrayList<User>> call, Response<ArrayList<User>> response) {
                 if (response.isSuccessful()) {
-                    User user = response.body();
+
+                    ArrayList<User> users = response.body();
+                    for (User u : users) {
+                        if (u.getEmail().equals(email)){
+                            accountAPICallBack.onEmailFailed();
+                            return;
+                        }
+                    }
                     accountAPICallBack.onUserIsAbleToBeCreated();
+
                 } else {
-                    accountAPICallBack.onEmailFailed();
+                    accountAPICallBack.onFailure();
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<ArrayList<User>> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
             }
         });
@@ -266,6 +285,27 @@ public class RestAPIManager {
             @Override
             public void onFailure(Call<BloodPressure> call, Throwable t) {
                 bloodAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void onDeleteAccount(String login, final AccountAPICallBack accountAPICallBack) {
+        Call<Void> call = restApiService.deleteUser(login, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                if (response.isSuccessful()) {
+                    accountAPICallBack.onDeleteAccount();
+                } else {
+                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
             }
         });
     }

@@ -4,9 +4,10 @@ import com.example.twentyone.model.data.User;
 
 public interface AccountAPICallBack extends RestAPICallBack {
     void onChangePassword();
-    void onCheckUserExistence(User user);
-    void onCheckEmailExistence(User user);
+    void onCheckEmailExistence();
     void onUsernameFailed();
     void onEmailFailed();
     void onUserIsAbleToBeCreated();
+    void onFailure();
+    void onDeleteAccount();
 }

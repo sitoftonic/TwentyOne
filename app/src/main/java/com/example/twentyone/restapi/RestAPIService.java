@@ -9,8 +9,11 @@ import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -32,7 +35,11 @@ public interface RestAPIService {
     @POST("/api/account/change-password")
     Call<Void> changePassword(@Body PasswordChange passwordChange, @Header("Authorization") String token);
     @GET("/api/_search/users/{query}")
-    Call<User> checkUserExistence(@Path("query") String query);
+    Call<ArrayList<User>> checkUserExistence(@Path("query") String query, @Header("Authorization") String token);
+    @GET("/api/users/{login}")
+    Call<User> getUser(@Path("login") String login);
     @GET("/api/blood_pressures")
     Call<BloodPressure> getAllBloodPressure(@Header("Authorization") String token);
+    @DELETE("/api/users/{login}")
+    Call<Void> deleteUser(@Path("login") String login, @Header("Authorization") String token);
 }
