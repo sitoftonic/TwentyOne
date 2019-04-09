@@ -12,6 +12,12 @@ import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.example.twentyone.restapi.callback.RegisterAPICallBack;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,6 +32,7 @@ public class RestAPIManager {
     private RestAPIService restApiService;
     private UserToken userToken;
 
+    private List<Points> pointsList,pointsListByUser;
 
     public static RestAPIManager getInstance() {
         if (ourInstance == null) {
@@ -158,25 +165,95 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void getAllPoints(final PointsAPICallBack pointsAPICallBack) {
-        Log.d("LRM", "all points GET request");
+    public synchronized void getAllPoints(final PointsAPICallBack pointsAPICallBack){
+        pointsList = new LinkedList<>();
+        getAllPoints(pointsAPICallBack,0);
+    }
 
-        Call<Points> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken());
-        call.enqueue(new Callback<Points>() {
+    private synchronized void getAllPoints(final PointsAPICallBack pointsAPICallBack, final int level) {
+        Log.d("LRM", "all points GET request");
+        //http://android.byted.xyz/api/points?page=1000&paged=true&sort.sorted=false&sort.unsorted=true
+        Map<String, String> map = getParamsGetAllPoints(level);
+        Call<Points[]> call =  restApiService.getAllPoints("Bearer " + userToken.getIdToken(),map);
+        call.enqueue(new Callback<Points[]>() {
             @Override
-            public void onResponse(Call<Points> call, Response<Points> response) {
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
                 if (response.isSuccessful()) {
-                    pointsAPICallBack.onGetPoints(response.body());
+                    if(response.body().length>0){
+                        pointsList.addAll(Arrays.asList(response.body()));
+                        getAllPoints(pointsAPICallBack,level+1);
+                    }
+                    else{
+                        pointsAPICallBack.onFinishedCallback(pointsList);
+                    }
+
                 } else {
                     pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
             }
 
             @Override
-            public void onFailure(Call<Points> call, Throwable t) {
+            public void onFailure(Call<Points[]> call, Throwable t) {
                 pointsAPICallBack.onFailure(t);
             }
         });
+    }
+
+    public synchronized void getAllPointsByUser(final PointsAPICallBack pointsAPICallBack){
+        pointsListByUser = new LinkedList<>();
+        getPointsByUser(pointsAPICallBack,0);
+    }
+
+    public synchronized void getPointsByUser(final PointsAPICallBack pointsAPICallBack, final int level) {
+        Log.d("LRM", "all points GET request");
+        //http://android.byted.xyz/api/points?page=1000&paged=true&sort.sorted=false&sort.unsorted=true
+        Map<String, String> map = new HashMap<>();
+        map.put("query","SELECT * FROM POINTS WHERE USER_ID = "+userToken.getIdToken());
+        map.put("page",String.valueOf(level));
+
+        Call<Points[]> call =  restApiService.getAllPoints("Bearer " + userToken.getIdToken(),map);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length>0){
+                        if(response.body()[response.body().length-1].getUser().getId()!=Integer.parseInt(userToken.getIdToken())){
+                            for(Points p : response.body()){
+                                if(p.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
+                                    pointsListByUser.add(p);
+                                    continue;
+                                }
+                                break;
+                            }
+                            pointsAPICallBack.onFinishedCallback(pointsList);
+                            return;
+                        }
+                        pointsListByUser.addAll(Arrays.asList(response.body()));
+                        getAllPoints(pointsAPICallBack,level+1);
+                    }
+                    else{
+                        pointsAPICallBack.onFinishedCallback(pointsList);
+                    }
+
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    private Map<String, String> getParamsGetAllPoints(int level) {
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("page",String.valueOf(level));
+        map.put("paged","true");
+        map.put("sort.sorted","false");
+        map.put("sort.unsorted","true");
+        return map;
     }
 
     public synchronized void changePassword(String oldPassword, String finalPassword, final AccountAPICallBack accountAPICallBack) {
