@@ -1,5 +1,7 @@
 package com.example.twentyone.model;
 
+import java.util.regex.Pattern;
+
 public class Validator {
 
     // Instance
@@ -32,36 +34,12 @@ public class Validator {
 
     public int validateLoginUsername(final String username) {
 
-        if (username == null){
-            return EMPTY;
-        }
-        if (username.length() == 0) {
-            return EMPTY;
-        } else if (username.length() < USERNAME_MIN_LENGTH){
-            return SHORT;
-        } else if (username.length() > USERNAME_MAX_LENGTH){
-            return LONG;
-        } else {
-            // TODO: username regex and return FORMAT
-            return CORRECT;
-        }
+        return validateRegisterUsername(username);
 
     }
 
     public int validateLoginPassword(final String password) {
-        if (password == null){
-            return EMPTY;
-        }
-        if (password.length() == 0) {
-            return EMPTY;
-        } else if (password.length() < PASSWORD_MIN_LENGTH){
-            return SHORT;
-        } else if (password.length() > PASSWORD_MAX_LENGTH){
-            return LONG;
-        } else {
-            // TODO: password regex and return FORMAT
-            return CORRECT;
-        }
+        return validateRegisterPassword(password);
     }
 
     public int validateLogin(final String username, final String password) {
@@ -90,17 +68,26 @@ public class Validator {
         } else if (username.length() > USERNAME_MAX_LENGTH){
             return LONG;
         } else {
-            // TODO: Username regex and return FORMAT
-            return CORRECT;
+            //nums y letrass no especiales (solo guion y barra baja y punto)
+            boolean hasLetter = Pattern.matches(".*\\w.*",username);
+            boolean hasNonLetterCharacters = Pattern.matches(".*[^A-Za-z0-9].*",username);
+            if(hasLetter&&!hasNonLetterCharacters) return CORRECT;
+
+            return FORMAT;
         }
     }
 
     public int validateRegisterEmail(final String email) {
 
         if (email.length() == 0) {
-            return 1;
-        } else {
-            return 0;
+            return EMPTY;
+        }
+        else {
+            if(Pattern.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+                    ,email)){
+                return CORRECT;
+            }
+            return FORMAT;
         }
     }
 
@@ -113,9 +100,24 @@ public class Validator {
         } else if (password.length() > PASSWORD_MAX_LENGTH){
             return LONG;
         } else {
-            // TODO: Password regex and return FORMAT
-            return CORRECT;
+            //min una may un num u special character
+            boolean number = Pattern.matches(".*\\d.*", password);
+            boolean special = Pattern.matches(".*[^A-Za-z0-9].*",password);
+            //boolean special = hasSpecial(password);
+            boolean min = !password.equals(password.toUpperCase());
+            boolean may = !password.equals(password.toLowerCase());
+            if(number&&special&&min&&may) return CORRECT;
+            return FORMAT;
         }
+    }
+
+    private boolean hasSpecial(String password) {
+        for(char val : password.toCharArray()){
+            if(!(val>='0'&&val<='0')&&!(val>='A'&&val<='Z')&&!(val>='a'&&val<='z')){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
