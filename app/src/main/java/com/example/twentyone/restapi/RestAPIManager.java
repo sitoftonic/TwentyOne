@@ -17,6 +17,7 @@ import com.example.twentyone.restapi.callback.RegisterAPICallBack;
 
 import java.util.ArrayList;
 
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,7 +31,6 @@ public class RestAPIManager {
     private Retrofit retrofit;
     private RestAPIService restApiService;
     private UserToken userToken;
-
 
     public static RestAPIManager getInstance() {
         if (ourInstance == null) {
@@ -163,26 +163,6 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void getAllPoints(final PointsAPICallBack pointsAPICallBack) {
-        Log.d("LRM", "all points GET request");
-
-        Call<Points> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken());
-        call.enqueue(new Callback<Points>() {
-            @Override
-            public void onResponse(Call<Points> call, Response<Points> response) {
-                if (response.isSuccessful()) {
-                    pointsAPICallBack.onGetPoints(response.body());
-                } else {
-                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Points> call, Throwable t) {
-                pointsAPICallBack.onFailure(t);
-            }
-        });
-    }
 
     public synchronized void changePassword(String oldPassword, String finalPassword, final AccountAPICallBack accountAPICallBack) {
         Log.d("LRM", "all points GET request");
