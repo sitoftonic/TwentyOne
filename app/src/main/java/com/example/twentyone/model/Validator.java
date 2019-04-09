@@ -2,30 +2,65 @@ package com.example.twentyone.model;
 
 public class Validator {
 
-    private static final Validator ourInstance = new Validator();
+    // Instance
+    private static Validator ourInstance;
+
+    // Username limits
+    private static final int USERNAME_MIN_LENGTH = 4;
+    private static final int USERNAME_MAX_LENGTH = 12;
+
+    // Password limits
+    private static final int PASSWORD_MIN_LENGTH = 4;
+    private static final int PASSWORD_MAX_LENGTH = 12;
+
+    // General validation return values
+    public static final int CORRECT = 0;
+    public static final int EMPTY = 1;
+    public static final int SHORT = 2;
+    public static final int LONG = 3;
+    public static final int FORMAT = 4;
+
 
     public static Validator getInstance() {
+        if (ourInstance == null){
+            ourInstance = new Validator();
+        }
         return ourInstance;
     }
 
-    private Validator() {
-    }
+    private Validator() {}
 
     public int validateLoginUsername(final String username) {
 
+        if (username == null){
+            return EMPTY;
+        }
         if (username.length() == 0) {
-            return 1;
+            return EMPTY;
+        } else if (username.length() < USERNAME_MIN_LENGTH){
+            return SHORT;
+        } else if (username.length() > USERNAME_MAX_LENGTH){
+            return LONG;
         } else {
-            return 0;
+            // TODO: username regex and return FORMAT
+            return CORRECT;
         }
 
     }
 
     public int validateLoginPassword(final String password) {
+        if (password == null){
+            return EMPTY;
+        }
         if (password.length() == 0) {
-            return 1;
+            return EMPTY;
+        } else if (password.length() < PASSWORD_MIN_LENGTH){
+            return SHORT;
+        } else if (password.length() > PASSWORD_MAX_LENGTH){
+            return LONG;
         } else {
-            return 0;
+            // TODO: password regex and return FORMAT
+            return CORRECT;
         }
     }
 
@@ -49,9 +84,14 @@ public class Validator {
     public int validateRegisterUsername(final String username) {
 
         if (username.length() == 0) {
-            return 1;
+            return EMPTY;
+        } else if (username.length() < USERNAME_MIN_LENGTH){
+            return SHORT;
+        } else if (username.length() > USERNAME_MAX_LENGTH){
+            return LONG;
         } else {
-            return 0;
+            // TODO: Username regex and return FORMAT
+            return CORRECT;
         }
     }
 
@@ -67,9 +107,14 @@ public class Validator {
     public int validateRegisterPassword(final String password) {
 
         if (password.length() == 0) {
-            return 1;
+            return EMPTY;
+        } else if (password.length() < PASSWORD_MIN_LENGTH){
+            return SHORT;
+        } else if (password.length() > PASSWORD_MAX_LENGTH){
+            return LONG;
         } else {
-            return 0;
+            // TODO: Password regex and return FORMAT
+            return CORRECT;
         }
     }
 

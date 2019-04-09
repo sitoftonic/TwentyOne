@@ -80,7 +80,7 @@
                     android:layout_marginTop="16dp"
                     android:hint="@string/login_password"
                     app:counterEnabled="true"
-                    app:counterMaxLength="8"
+                    app:counterMaxLength="12"
                     app:errorEnabled="true"
                     app:hintAnimationEnabled="true"
                     app:passwordToggleEnabled="true"

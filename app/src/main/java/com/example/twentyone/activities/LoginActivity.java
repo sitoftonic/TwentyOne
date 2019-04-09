@@ -1,11 +1,13 @@
 package com.example.twentyone.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
@@ -15,6 +17,7 @@ import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -42,8 +45,9 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     private MaterialButton signin_button;
     private MaterialButton forgot_button;
 
+    private ProgressDialog progressDialog;
+
     private AnimationManager animationManager = AnimationManager.getInstance();
-    private Validator validator = Validator.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,9 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
         setContentView(R.layout.activity_login);
         initToolbar();
         initView();
+        initProgressDialog();
     }
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -70,6 +76,13 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
         outState.putString(USERNAME_KEY, username_text.getText().toString());
         outState.putString(PASSWORD_KEY, password_text.getText().toString());
         outState.putBoolean(REMEMBER_KEY, remember.isChecked());
+    }
+
+    private void initProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
     }
 
     private void initToolbar() {
@@ -122,8 +135,15 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
         String username = username_text.getText().toString();
         String password = password_text.getText().toString();
 
-        boolean cancel = false;
+        boolean correct = false;
 
+        correct = isUsernameValid(username) && isPasswordValid(password);
+
+        if (correct) {
+            RestAPIManager.getInstance().getUserToken(username, password, this);
+            progressDialog.show();
+        }
+        /*
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
             password_input.setError(getString(R.string.login_password_error_empty));
@@ -139,10 +159,9 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
         } else if (!isUsernameValid(username)) {
             cancel = true;
         }
+        */
 
-        if (!cancel) {
-            RestAPIManager.getInstance().getUserToken(username, password, this);
-        }
+
 
         /*
         int err = 0;
@@ -179,43 +198,54 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     }
 
     private boolean isUsernameValid(String username) {
-
         Log.d("LOLO", "Validating username");
-        if (username.length() < 6){
-            username_input.setError(getString(R.string.login_username_error_minChar));
-            Log.d("LOLO", "Short username");
-            return false;
+
+        int valid = Validator.getInstance().validateLoginUsername(username);
+
+        switch (valid){
+            case Validator.EMPTY:
+                username_input.setError(getString(R.string.login_username_error_empty));
+                return false;
+            case Validator.SHORT:
+                username_input.setError(getString(R.string.login_username_error_minChar));
+                return false;
+            case Validator.LONG:
+                username_input.setError(getString(R.string.login_username_error_maxChar));
+                return false;
+            case Validator.FORMAT:
+                username_input.setError(getString(R.string.login_username_error_format));
+                return false;
+            default:
+                // It's OK
+                username_input.setError(null);
+                return true;
         }
-
-        if (username.length() > 12){
-            username_input.setError(getString(R.string.login_username_error_maxChar));
-            Log.d("LOLO", "Long username");
-            return false;
-        }
-
-        // TODO: Comprovar regex + añadir error en archivo strings
-
-        return true;
     }
 
     private boolean isPasswordValid(String password) {
         Log.d("LOLO", "Validating password");
 
-        if (password.length() < 4){
-            password_input.setError(getString(R.string.login_password_error_minChar));
-            Log.d("LOLO", "Short password");
-            return false;
+        int valid = Validator.getInstance().validateLoginPassword(password);
+
+        switch (valid){
+            case Validator.EMPTY:
+                password_input.setError(getString(R.string.login_password_error_empty));
+                return false;
+            case Validator.SHORT:
+                password_input.setError(getString(R.string.login_password_error_minChar));
+                return false;
+            case Validator.LONG:
+                password_input.setError(getString(R.string.login_password_error_maxChar));
+                return false;
+            case Validator.FORMAT:
+                password_input.setError(getString(R.string.login_password_error_format));
+                return false;
+            default:
+                // It's OK
+                password_input.setError(null);
+                return true;
         }
 
-        if (password.length() > 12){
-            password_input.setError(getString(R.string.login_password_error_maxChar));
-            Log.d("LOLO", "Long password");
-            return false;
-        }
-
-        // TODO: Comprovar regex + añadir error en archivo strings
-
-        return true;
     }
 
     public void switchToMainActivity() {
@@ -233,6 +263,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     @Override
     public void onLoginSuccess(UserToken userToken) {
         Log.d("LOLO", "Login success");
+        progressDialog.dismiss();
         switchToMainActivity();
     }
 
@@ -240,5 +271,8 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     public void onFailure(Throwable t) {
         Log.d("LOLO", "Login failed");
         Log.d("LOLO", t.getMessage());
+        progressDialog.dismiss();
+        Snackbar.make(findViewById(R.id.activity_login) , R.string.login_toast_error, Snackbar.LENGTH_SHORT).show();
+        animationManager.hapticError(this);
     }
 }

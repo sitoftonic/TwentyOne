@@ -1,11 +1,14 @@
 package com.example.twentyone.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
 import com.example.twentyone.model.Validator;
+import com.example.twentyone.restapi.callback.RegisterAPICallBack;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -16,7 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements RegisterAPICallBack {
 
     private Toolbar toolbar;
 
@@ -161,5 +164,26 @@ public class RegisterActivity extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.activity_register), R.string.register_toast_error, Snackbar.LENGTH_SHORT).show();
             animationManager.hapticError(this);
         }
+    }
+
+
+    public void switchToMainActivity() {
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user", username_text.getText().toString());
+        Log.d("LOLO", "Launch main Activity");
+        startActivity(intent);
+    }
+
+    @Override
+    public void onSuccess() {
+        Log.d("LOLO", "Register success");
+        switchToMainActivity();
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        Log.d("LOLO", "Register failed");
+        // TODO: Something to notificate user that register failed
     }
 }

@@ -17,9 +17,11 @@
     <string name="login_username_error_empty">Username can\'t be empty</string>
     <string name="login_username_error_minChar">Username can\'t be less than 6 characters</string>
     <string name="login_username_error_maxChar">Username can\'t be more than 12 characters</string>
+    <string name="login_username_error_format">Username incorrect format</string>
     <string name="login_password_error_empty">Password can\'t be empty</string>
     <string name="login_password_error_minChar">Password can\'t be less than 4 characters</string>
     <string name="login_password_error_maxChar">Password can\'t be more than 12 characters</string>
+    <string name="login_password_error_format">Password incorrect format</string>
     <string name="login_toast_success">Log In Successful</string>
     <string name="login_toast_error">Authentication Error</string>
 
