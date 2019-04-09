@@ -3,14 +3,18 @@ package com.example.twentyone.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
 import com.example.twentyone.dialogs.ResetPassDialog;
 import com.example.twentyone.model.Validator;
+import com.example.twentyone.model.data.UserToken;
+import com.example.twentyone.restapi.RestAPIManager;
+import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -20,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginAPICallBack {
 
     private Toolbar toolbar;
 
@@ -114,6 +118,33 @@ public class LoginActivity extends AppCompatActivity {
 
     private void validateFields() {
 
+        // Store values at the time of the login attempt.
+        String username = username_text.getText().toString();
+        String password = password_text.getText().toString();
+
+        boolean cancel = false;
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password)) {
+            password_input.setError(getString(R.string.login_password_error_empty));
+            cancel = true;
+        }else if (!isPasswordValid(password)){
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(username)) {
+            username_input.setError(getString(R.string.login_username_error_empty));
+            cancel = true;
+        } else if (!isUsernameValid(username)) {
+            cancel = true;
+        }
+
+        if (!cancel) {
+            RestAPIManager.getInstance().getUserToken(username, password, this);
+        }
+
+        /*
         int err = 0;
 
         switch (validator.validateLoginUsername(username_text.getText().toString())) {
@@ -144,12 +175,54 @@ public class LoginActivity extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.activity_login) , R.string.login_toast_error, Snackbar.LENGTH_SHORT).show();
             animationManager.hapticError(this);
         }
+        */
+    }
+
+    private boolean isUsernameValid(String username) {
+
+        Log.d("LOLO", "Validating username");
+        if (username.length() < 6){
+            username_input.setError(getString(R.string.login_username_error_minChar));
+            Log.d("LOLO", "Short username");
+            return false;
+        }
+
+        if (username.length() > 12){
+            username_input.setError(getString(R.string.login_username_error_maxChar));
+            Log.d("LOLO", "Long username");
+            return false;
+        }
+
+        // TODO: Comprovar regex + añadir error en archivo strings
+
+        return true;
+    }
+
+    private boolean isPasswordValid(String password) {
+        Log.d("LOLO", "Validating password");
+
+        if (password.length() < 4){
+            password_input.setError(getString(R.string.login_password_error_minChar));
+            Log.d("LOLO", "Short password");
+            return false;
+        }
+
+        if (password.length() > 12){
+            password_input.setError(getString(R.string.login_password_error_maxChar));
+            Log.d("LOLO", "Long password");
+            return false;
+        }
+
+        // TODO: Comprovar regex + añadir error en archivo strings
+
+        return true;
     }
 
     public void switchToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user", username_text.getText().toString());
+        Log.d("LOLO", "Launch main Activity");
         startActivity(intent);
     }
 
@@ -157,4 +230,15 @@ public class LoginActivity extends AppCompatActivity {
         new ResetPassDialog().show(getSupportFragmentManager(), "dialog");
     }
 
+    @Override
+    public void onLoginSuccess(UserToken userToken) {
+        Log.d("LOLO", "Login success");
+        switchToMainActivity();
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        Log.d("LOLO", "Login failed");
+        Log.d("LOLO", t.getMessage());
+    }
 }
