@@ -38,5 +38,7 @@ public interface RestAPIService {
     //@GET("/api/_search/points")
     //Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @GET("/api/blood_pressures")
-    Call<BloodPressure> getAllBloodPressure(@Header("Authorization") String token);
+    Call<BloodPressure[]> getAllBloodPressure(@Header("Authorization") String token,@QueryMap Map<String,String> params);
+    @GET("/api/_search/blood_pressures")
+    Call<BloodPressure[]> getAllBloodPressureByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
 }

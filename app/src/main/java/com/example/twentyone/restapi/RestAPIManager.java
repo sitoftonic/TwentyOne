@@ -35,6 +35,7 @@ public class RestAPIManager {
     private UserToken userToken;
 
     private List<Points> pointsList,pointsListByUser;
+    private List<BloodPressure> bloodList;
 
     public static RestAPIManager getInstance() {
         if (ourInstance == null) {
@@ -167,96 +168,6 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void getAllPoints(final PointsAPICallBack pointsAPICallBack){
-        pointsList = new LinkedList<>();
-        getAllPoints(pointsAPICallBack,0);
-    }
-
-    private synchronized void getAllPoints(final PointsAPICallBack pointsAPICallBack, final int level) {
-        Log.d("LRM", "all points GET request");
-        //http://android.byted.xyz/api/points?page=1000&paged=true&sort.sorted=false&sort.unsorted=true
-        Map<String, String> map = getParamsGetAllPoints(level);
-        Call<Points[]> call =  restApiService.getAllPoints("Bearer " + userToken.getIdToken(),map);
-        call.enqueue(new Callback<Points[]>() {
-            @Override
-            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
-                if (response.isSuccessful()) {
-                    if(response.body().length>0){
-                        pointsList.addAll(Arrays.asList(response.body()));
-                        getAllPoints(pointsAPICallBack,level+1);
-                    }
-                    else{
-                        pointsAPICallBack.onFinishedCallback(pointsList);
-                    }
-
-                } else {
-                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Points[]> call, Throwable t) {
-                pointsAPICallBack.onFailure(t);
-            }
-        });
-    }
-
-    public synchronized void getAllPointsByUser(final PointsAPICallBack pointsAPICallBack){
-        pointsListByUser = new LinkedList<>();
-        getPointsByUser(pointsAPICallBack,0);
-    }
-
-    public synchronized void getPointsByUser(final PointsAPICallBack pointsAPICallBack, final int level) {
-        Log.d("LRM", "all points GET request");
-        //http://android.byted.xyz/api/points?page=1000&paged=true&sort.sorted=false&sort.unsorted=true
-        Map<String, String> map = new HashMap<>();
-        map.put("query","SELECT * FROM POINTS WHERE USER_ID = "+userToken.getIdToken());
-        map.put("page",String.valueOf(level));
-
-        Call<Points[]> call =  restApiService.getAllPoints("Bearer " + userToken.getIdToken(),map);
-        call.enqueue(new Callback<Points[]>() {
-            @Override
-            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
-                if (response.isSuccessful()) {
-                    if(response.body().length>0){
-                        if(response.body()[response.body().length-1].getUser().getId()!=Integer.parseInt(userToken.getIdToken())){
-                            for(Points p : response.body()){
-                                if(p.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
-                                    pointsListByUser.add(p);
-                                    continue;
-                                }
-                                break;
-                            }
-                            pointsAPICallBack.onFinishedCallback(pointsList);
-                            return;
-                        }
-                        pointsListByUser.addAll(Arrays.asList(response.body()));
-                        getAllPoints(pointsAPICallBack,level+1);
-                    }
-                    else{
-                        pointsAPICallBack.onFinishedCallback(pointsList);
-                    }
-
-                } else {
-                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Points[]> call, Throwable t) {
-                pointsAPICallBack.onFailure(t);
-            }
-        });
-    }
-
-    private Map<String, String> getParamsGetAllPoints(int level) {
-        Map<String,String> map = new HashMap<String,String>();
-        map.put("page",String.valueOf(level));
-        map.put("paged","true");
-        map.put("sort.sorted","false");
-        map.put("sort.unsorted","true");
-        return map;
-    }
 
     public synchronized void changePassword(String oldPassword, String finalPassword, final AccountAPICallBack accountAPICallBack) {
         Log.d("LRM", "all points GET request");
@@ -275,27 +186,6 @@ public class RestAPIManager {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
-            }
-        });
-    }
-
-    public synchronized void getAllBloodPressure(final BloodAPICallBack bloodAPICallBack) {
-        Log.d("LRM", "all points GET request");
-
-        Call<BloodPressure> call = restApiService.getAllBloodPressure("Bearer " + userToken.getIdToken());
-        call.enqueue(new Callback<BloodPressure>() {
-            @Override
-            public void onResponse(Call<BloodPressure> call, Response<BloodPressure> response) {
-                if (response.isSuccessful()) {
-                    bloodAPICallBack.onGetAllBloodPressure();
-                } else {
-                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BloodPressure> call, Throwable t) {
-                bloodAPICallBack.onFailure(t);
             }
         });
     }
