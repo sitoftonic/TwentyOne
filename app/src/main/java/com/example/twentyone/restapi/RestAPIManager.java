@@ -2,10 +2,12 @@ package com.example.twentyone.restapi;
 
 import android.util.Log;
 
+import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
+import com.example.twentyone.restapi.callback.AccountAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.example.twentyone.restapi.callback.RegisterAPICallBack;
@@ -152,6 +154,48 @@ public class RestAPIManager {
             @Override
             public void onFailure(Call<PointsWeek> call, Throwable t) {
                 pointsAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void getAllPoints(final PointsAPICallBack pointsAPICallBack) {
+        Log.d("LRM", "all points GET request");
+
+        Call<Points> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<Points>() {
+            @Override
+            public void onResponse(Call<Points> call, Response<Points> response) {
+                if (response.isSuccessful()) {
+                    pointsAPICallBack.onGetPoints(response.body());
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void changePassword(String oldPassword, String finalPassword, final AccountAPICallBack accountAPICallBack) {
+        Log.d("LRM", "all points GET request");
+
+        Call<Void> call = restApiService.changePassword(new PasswordChange(oldPassword,finalPassword), "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    accountAPICallBack.onChangePassword();
+                } else {
+                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
             }
         });
     }
