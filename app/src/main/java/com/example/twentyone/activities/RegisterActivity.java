@@ -1,5 +1,6 @@
 package com.example.twentyone.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,8 @@ import android.view.View;
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
 import com.example.twentyone.model.Validator;
+import com.example.twentyone.restapi.RestAPIManager;
+import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.RegisterAPICallBack;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -41,8 +44,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
 
     private MaterialButton register_button;
 
-    private AnimationManager animationManager = AnimationManager.getInstance();
-    private Validator validator = Validator.getInstance();
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         setContentView(R.layout.activity_register);
         initToolbar();
         initView();
+        initProgressDialog();
     }
 
     @Override
@@ -88,6 +91,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         });
     }
 
+    private void initProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Processing...");
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+    }
+
     private void initView() {
 
         username_input = findViewById(R.id.username_text_input);
@@ -114,56 +124,69 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
 
     private void validateFields() {
 
-        int err = 0;
+        // Store values at the time of the login attempt.
+        String username = username_text.getText().toString();
+        String password = password_text.getText().toString();
 
-        switch (validator.validateRegisterUsername(username_text.getText().toString())) {
-            case 0:
-                username_input.setError("");
-                break;
+        boolean correct = false;
 
-            case 1:
-                username_input.setError(getString(R.string.register_username_error_empty));
-                username_input.startAnimation(animationManager.shakeError());
-                err = 1;
-                break;
+        correct = isUsernameValid(username) && isPasswordValid(password);
+
+        if (correct) {
+            RestAPIManager.getInstance().getUserToken(username, password, this);
+            progressDialog.show();
+        }
+    }
+
+    private boolean isUsernameValid(String username) {
+        Log.d("LOLO", "Validating username");
+
+        int valid = Validator.getInstance().validateLoginUsername(username);
+
+        switch (valid){
+            case Validator.EMPTY:
+                username_input.setError(getString(R.string.login_username_error_empty));
+                return false;
+            case Validator.SHORT:
+                username_input.setError(getString(R.string.login_username_error_minChar));
+                return false;
+            case Validator.LONG:
+                username_input.setError(getString(R.string.login_username_error_maxChar));
+                return false;
+            case Validator.FORMAT:
+                username_input.setError(getString(R.string.login_username_error_format));
+                return false;
+            default:
+                // It's OK
+                username_input.setError(null);
+                return true;
+        }
+    }
+
+    private boolean isPasswordValid(String password) {
+        Log.d("LOLO", "Validating password");
+
+        int valid = Validator.getInstance().validateLoginPassword(password);
+
+        switch (valid){
+            case Validator.EMPTY:
+                password_input.setError(getString(R.string.login_password_error_empty));
+                return false;
+            case Validator.SHORT:
+                password_input.setError(getString(R.string.login_password_error_minChar));
+                return false;
+            case Validator.LONG:
+                password_input.setError(getString(R.string.login_password_error_maxChar));
+                return false;
+            case Validator.FORMAT:
+                password_input.setError(getString(R.string.login_password_error_format));
+                return false;
+            default:
+                // It's OK
+                password_input.setError(null);
+                return true;
         }
 
-        switch (validator.validateRegisterUsername(email_text.getText().toString())) {
-            case 0:
-                email_input.setError("");
-                break;
-
-            case 1:
-                email_input.setError(getString(R.string.register_email_error_empty));
-                email_input.startAnimation(animationManager.shakeError());
-                err = 2;
-                break;
-        }
-
-        switch (validator.validateRegisterPassword(password_text.getText().toString())) {
-            case 0:
-                password_input.setError("");
-                if (!password_repeat_text.getText().toString().equals(password_text.getText().toString())) {
-                    password_repeat_input.setError(getString(R.string.register_password_error_match));
-                    password_repeat_input.startAnimation(animationManager.shakeError());
-                    err = 4;
-                } else {
-                    password_repeat_input.setError("");
-                }
-                break;
-            case 1:
-                password_input.setError(getString(R.string.register_password_error_empty));
-                password_input.startAnimation(animationManager.shakeError());
-                err = 3;
-                break;
-        }
-
-        if (err == 0) {
-            Snackbar.make(findViewById(R.id.activity_register), R.string.register_toast_success, Snackbar.LENGTH_SHORT).show();
-        } else {
-            Snackbar.make(findViewById(R.id.activity_register), R.string.register_toast_error, Snackbar.LENGTH_SHORT).show();
-            animationManager.hapticError(this);
-        }
     }
 
 

@@ -143,58 +143,6 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
             RestAPIManager.getInstance().getUserToken(username, password, this);
             progressDialog.show();
         }
-        /*
-        // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password)) {
-            password_input.setError(getString(R.string.login_password_error_empty));
-            cancel = true;
-        }else if (!isPasswordValid(password)){
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(username)) {
-            username_input.setError(getString(R.string.login_username_error_empty));
-            cancel = true;
-        } else if (!isUsernameValid(username)) {
-            cancel = true;
-        }
-        */
-
-
-
-        /*
-        int err = 0;
-
-        switch (validator.validateLoginUsername(username_text.getText().toString())) {
-            case 0:
-                username_input.setError("");
-                break;
-            case 1:
-                username_input.setError(getString(R.string.login_username_error_empty));
-                username_input.startAnimation(animationManager.shakeError());
-                err = 1;
-                break;
-        }
-
-        switch (validator.validateLoginPassword(password_text.getText().toString())) {
-            case 0:
-                password_input.setError("");
-                break;
-            case 1:
-                password_input.setError(getString(R.string.login_password_error_empty));
-                password_input.startAnimation(animationManager.shakeError());
-                err = 2;
-                break;
-        }
-
-        if (err == 0) {
-            switchToMainActivity();
-        } else {
-            Snackbar.make(findViewById(R.id.activity_login) , R.string.login_toast_error, Snackbar.LENGTH_SHORT).show();
-            animationManager.hapticError(this);
-        }
-        */
     }
 
     private boolean isUsernameValid(String username) {
