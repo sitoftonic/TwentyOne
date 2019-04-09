@@ -1,6 +1,7 @@
 package com.example.twentyone.restapi;
 
 
+import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.UserData;
@@ -24,4 +25,8 @@ public interface RestAPIService {
     Call<Void> register(@Body UserData userData);
     @GET("/api/points-this-week")
     Call<PointsWeek> getPointsThisWeek(@Header("Authorization") String token);
+    @GET("/api/points")
+    Call<Points> getAllPoints(@Header("Authorization") String token);
+    @POST("/api/account/change-password")
+    Call<Void> changePassword(@Body PasswordChange passwordChange, @Header("Authorization") String token);
 }
