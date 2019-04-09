@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.twentyone.R;
+import com.example.twentyone.model.data.User;
 import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
 
@@ -49,7 +50,20 @@ public class AccountFragment extends Fragment implements AccountAPICallBack {
     }
 
     @Override
-    public void onFailure(Throwable t) {
+    public void onCheckUserExistence(User user) { }
 
-    }
+    @Override
+    public void onCheckEmailExistence(User user) { }
+
+    @Override
+    public void onUsernameFailed() { }
+
+    @Override
+    public void onEmailFailed() { }
+
+    @Override
+    public void onUserIsAbleToBeCreated() { }
+
+    @Override
+    public void onFailure(Throwable t) { }
 }
