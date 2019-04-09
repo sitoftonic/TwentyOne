@@ -2,12 +2,14 @@ package com.example.twentyone.restapi;
 
 import android.util.Log;
 
+import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
+import com.example.twentyone.restapi.callback.BloodAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.example.twentyone.restapi.callback.RegisterAPICallBack;
@@ -273,6 +275,27 @@ public class RestAPIManager {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void getAllBloodPressure(final BloodAPICallBack bloodAPICallBack) {
+        Log.d("LRM", "all points GET request");
+
+        Call<BloodPressure> call = restApiService.getAllBloodPressure("Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<BloodPressure>() {
+            @Override
+            public void onResponse(Call<BloodPressure> call, Response<BloodPressure> response) {
+                if (response.isSuccessful()) {
+                    bloodAPICallBack.onGetAllBloodPressure();
+                } else {
+                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure> call, Throwable t) {
+                bloodAPICallBack.onFailure(t);
             }
         });
     }

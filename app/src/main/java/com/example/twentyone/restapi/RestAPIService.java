@@ -1,6 +1,7 @@
 package com.example.twentyone.restapi;
 
 
+import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
@@ -28,7 +29,6 @@ public interface RestAPIService {
     Call<Void> register(@Body UserData userData);
     @GET("/api/points-this-week")
     Call<PointsWeek> getPointsThisWeek(@Header("Authorization") String token);
-    //http://android.byted.xyz/api/points?page=1000&paged=true&sort.sorted=false&sort.unsorted=true&unpaged=true
     @GET("/api/points")
     Call<Points[]> getAllPoints(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @POST("/api/account/change-password")
@@ -37,4 +37,6 @@ public interface RestAPIService {
     Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     //@GET("/api/_search/points")
     //Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
+    @GET("/api/blood_pressures")
+    Call<BloodPressure> getAllBloodPressure(@Header("Authorization") String token);
 }
