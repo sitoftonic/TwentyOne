@@ -1,6 +1,7 @@
 package com.example.twentyone.restapi;
 
 
+import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
@@ -32,4 +33,6 @@ public interface RestAPIService {
     Call<Void> changePassword(@Body PasswordChange passwordChange, @Header("Authorization") String token);
     @GET("/api/_search/users/{query}")
     Call<User> checkUserExistence(@Path("query") String query);
+    @GET("/api/blood_pressures")
+    Call<BloodPressure> getAllBloodPressure(@Header("Authorization") String token);
 }

@@ -9,6 +9,7 @@ import com.example.twentyone.R;
 import com.example.twentyone.model.data.User;
 import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
@@ -17,6 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class AccountFragment extends Fragment implements AccountAPICallBack {
+
+    private TextInputLayout password_input;
+    private TextInputLayout password_new_input;
 
     public static final String TAG = AccountFragment.class.getSimpleName();
 
@@ -33,6 +37,10 @@ public class AccountFragment extends Fragment implements AccountAPICallBack {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        String oldPassword = "admin";
+        String newPassword = "admin";
+
+        RestAPIManager.getInstance().changePassword(oldPassword, newPassword, this);
     }
 
     @Nullable
@@ -45,8 +53,7 @@ public class AccountFragment extends Fragment implements AccountAPICallBack {
 
     @Override
     public void onChangePassword() {
-        password_input = Objects.requireNonNull(ourInstance.getActivity()).findViewById(R.id.password_text_input);
-        RestAPIManager.getInstance().changePassword(username, password, this);
+        /* TODO action after changed password */
     }
 
     @Override
