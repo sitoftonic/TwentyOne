@@ -49,6 +49,7 @@
     <string name="register_password_error_maxChar">Password can\'t be more than 12 characters</string>
     <string name="register_password_error_format">Password incorrect format</string>
     <string name="register_password_error_match">Password should match</string>
+    <string name="register_email_error_alreadyExists">Email is already used</string>
     <string name="register_toast_success">User Registered Successfully</string>
     <string name="register_toast_error">Registration Error</string>
 

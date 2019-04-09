@@ -9,7 +9,9 @@ import android.view.View;
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
 import com.example.twentyone.model.Validator;
+import com.example.twentyone.model.data.User;
 import com.example.twentyone.restapi.RestAPIManager;
+import com.example.twentyone.restapi.callback.AccountAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.RegisterAPICallBack;
 import com.google.android.material.button.MaterialButton;
@@ -22,7 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class RegisterActivity extends AppCompatActivity implements RegisterAPICallBack {
+public class RegisterActivity extends AppCompatActivity implements RegisterAPICallBack, AccountAPICallBack {
 
     private Toolbar toolbar;
 
@@ -44,7 +46,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
 
     private MaterialButton register_button;
 
+    private AnimationManager animationManager = AnimationManager.getInstance();
+
     private ProgressDialog progressDialog;
+
+    private String username;
+    private String email;
+    private String password;
+    private String repeatPassword;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -125,16 +134,42 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     private void validateFields() {
 
         // Store values at the time of the login attempt.
-        String username = username_text.getText().toString();
-        String password = password_text.getText().toString();
+        username = username_text.getText().toString();
+        email = email_text.getText().toString();
+        password = password_text.getText().toString();
+        repeatPassword = password_repeat_text.getText().toString();
 
         boolean correct = false;
 
-        correct = isUsernameValid(username) && isPasswordValid(password);
+        correct = isUsernameValid(username)
+                && isEmailValid(email)
+                && isPasswordValid(password)
+                && isRepeatedPasswordValid(password, repeatPassword);
 
         if (correct) {
-            RestAPIManager.getInstance().getUserToken(username, password, this);
             progressDialog.show();
+            RestAPIManager.getInstance().onCheckUserExistence(username, this);
+        }
+    }
+
+    private boolean isRepeatedPasswordValid(String password, String repeatedPassword) {
+        if (!password.equals(repeatedPassword)){
+            password_repeat_input.setError(getString(R.string.register_password_error_match));
+            return false;
+        }else{
+            password_repeat_input.setError(null);
+            return true;
+        }
+    }
+
+    private boolean isEmailValid(String email) {
+        int valid = Validator.getInstance().validateRegisterEmail(email);
+        switch (valid){
+            case Validator.CORRECT:
+                email_input.setError(null);
+                return true;
+            default:
+                return false; //TODO
         }
     }
 
@@ -157,9 +192,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
                 username_input.setError(getString(R.string.login_username_error_format));
                 return false;
             default:
-                // It's OK
                 username_input.setError(null);
                 return true;
+
         }
     }
 
@@ -198,15 +233,55 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         startActivity(intent);
     }
 
+
+
+    // Funciones vacías
     @Override
-    public void onSuccess() {
+    public void onChangePassword() {}
+    @Override
+    public void onFailure(Throwable t) {}
+    @Override
+    public void onCheckUserExistence(User user) {}
+
+
+
+
+    @Override
+    public void onUsernameFailed() {
+        // username ya existe
+        username_input.setError(getString(R.string.register_username_error_alreadyExists));
+        progressDialog.dismiss();
+    }
+
+    @Override
+    public void onCheckEmailExistence(User user) {
+        username_input.setError(null);
+        RestAPIManager.getInstance().onCheckEmailExistence(email, this);
+    }
+
+    @Override
+    public void onEmailFailed() {
+        // username ya existe
+        username_input.setError(getString(R.string.register_email_error_alreadyExists));
+        progressDialog.dismiss();
+    }
+    @Override
+    public void onUserIsAbleToBeCreated() {
+        email_input.setError(null);
+        RestAPIManager.getInstance().register(username, email, password, this);
+
+    }
+    @Override
+    public void onRegisterSuccess() {
         Log.d("LOLO", "Register success");
+        progressDialog.dismiss();
         switchToMainActivity();
     }
 
     @Override
-    public void onFailure(Throwable t) {
-        Log.d("LOLO", "Register failed");
-        // TODO: Something to notificate user that register failed
+    public void onRegisterFailed() {
+        progressDialog.dismiss();
+        Snackbar.make(findViewById(R.id.activity_register) , R.string.register_toast_error, Snackbar.LENGTH_SHORT).show();
+        animationManager.hapticError(this);
     }
 }

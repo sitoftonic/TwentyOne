@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
@@ -120,7 +121,7 @@ public class RestAPIManager {
             public void onResponse(Call<Void> call, Response<Void> response) {
 
                 if (response.isSuccessful()) {
-                    registerAPICallback.onSuccess();
+                    registerAPICallback.onRegisterSuccess();
                 } else {
                     registerAPICallback.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
@@ -195,6 +196,52 @@ public class RestAPIManager {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void onCheckUserExistence(String username, final AccountAPICallBack accountAPICallBack){
+        Log.d("LOLO", "username check existence");
+        String query = new StringBuilder().append("SELECT * FROM JHI_USER WHERE LOGIN = '" + username + "'").toString();
+
+        Call<User> call = restApiService.checkUserExistence(query);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    accountAPICallBack.onCheckEmailExistence(user);
+                } else {
+                    accountAPICallBack.onUsernameFailed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void onCheckEmailExistence(String email, final AccountAPICallBack accountAPICallBack){
+        Log.d("LOLO", "email check existence");
+        String query = new StringBuilder().append("SELECT * FROM JHI_USER WHERE EMAIL = '" + email + "'").toString();
+
+        Call<User> call = restApiService.checkUserExistence(query);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    accountAPICallBack.onUserIsAbleToBeCreated();
+                } else {
+                    accountAPICallBack.onEmailFailed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
             }
         });
