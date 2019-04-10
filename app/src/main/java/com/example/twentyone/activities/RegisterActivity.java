@@ -60,8 +60,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     private String password;
     private String repeatPassword;
 
-    private UserData temporaryUserData;
-    private static boolean tempoPhase;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +67,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
 
         setContentView(R.layout.activity_register);
 
-        tempoPhase = false;
         initToolbar();
         initView();
         initProgressDialog();
@@ -159,20 +156,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         if (correct) {
             progressDialog.show();
 
-            createTemporaryUser();
+            RestAPIManager.getInstance().register(username, email, password, this);
         }
     }
 
-    private void createTemporaryUser() {
-        tempoPhase = true;
-        String username = String.valueOf(System.currentTimeMillis());
-
-        this.temporaryUserData = new UserData(username, TEMPORARY_USER_EMAIL, TEMPORARY_USER_PASSWORD);
-
-        // Registrar usuario temporal
-        RestAPIManager.getInstance().register(temporaryUserData.getUsername(), temporaryUserData.getEmail(), temporaryUserData.getPassword(), this);
-
-    }
 
     private boolean isRepeatedPasswordValid(String password, String repeatedPassword) {
         if (!password.equals(repeatedPassword)){
@@ -252,9 +239,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
 
 
     public void switchToLaunchActivity() {
-        Intent intent = new Intent(RegisterActivity.this, LaunchActivity.class);
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        //intent.putExtra("user", username_text.getText().toString());
+        intent.putExtra("user", username_text.getText().toString());
         Log.d("LOLO", "to LaunchActivity");
         startActivity(intent);
     }
@@ -266,6 +253,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     public void onChangePassword() {}
     @Override
     public void onFailure(Throwable t) {
+        Snackbar.make(findViewById(R.id.activity_register) , R.string.register_connection_error, Snackbar.LENGTH_SHORT).show();
+        animationManager.hapticError(this);
+
         progressDialog.dismiss();
     }
 
@@ -281,27 +271,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     }
 
     @Override
-    public void onCheckEmailExistence() {
-        Log.d("LOLO", "Username success");
-        username_input.setError(null);
-        RestAPIManager.getInstance().onCheckEmailExistence(email, this);
-    }
-
-    @Override
     public void onEmailFailed() {
         // username ya existe
         Log.d("LOLO", "Email failed");
         username_input.setError(getString(R.string.register_email_error_alreadyExists));
         progressDialog.dismiss();
     }
-    @Override
-    public void onUserIsAbleToBeCreated() {
-        Log.d("LOLO", "Everything SUCCESS");
-        email_input.setError(null);
-        RestAPIManager.getInstance().onDeleteAccount(temporaryUserData.getUsername(), this);
-        //RestAPIManager.getInstance().register(username, email, password, this);
 
-    }
 
     @Override
     public void onFailure() {
@@ -310,30 +286,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         animationManager.hapticError(this);
 
         progressDialog.dismiss();
-
-
     }
 
     @Override
-    public void onDeleteAccount() {
-        // Hemos podido borrar el usuario temporal
-        tempoPhase = false;
-        RestAPIManager.getInstance().register(username, email, password, this);
-    }
-
-    @Override
-    public void onRegisterSuccess() {
-        Log.d("LOLO", "Register success");
-
-        if (tempoPhase){
-            RestAPIManager.getInstance().getUserToken(temporaryUserData.getUsername(), temporaryUserData.getPassword(), this);
-            // Acabamos de crear el usuario temporal y nos logeamos como él
-        }else{
-            // Hemos podido registrar el nuevo usuario, nos logeamos como el
-            RestAPIManager.getInstance().getUserToken(username, password, this);
-        }
-
-    }
+    public void onRegisterSuccess() { }
 
     @Override
     public void onRegisterFailed() {
@@ -347,11 +303,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     @Override
     public void onLoginSuccess(UserToken userToken) {
         Log.d("LOLO", "Login success");
-        if (tempoPhase){
-            RestAPIManager.getInstance().onCheckUserExistence(username, this);
-        }else{
-            progressDialog.dismiss();
-            switchToLaunchActivity();
-        }
+        progressDialog.dismiss();
+        switchToLaunchActivity();
+
+    }
+
+    @Override
+    public void onSuccess() {
+        // Register Success
+        RestAPIManager.getInstance().getUserToken(username, password, this);
     }
 }

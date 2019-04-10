@@ -57,22 +57,18 @@ public class AccountFragment extends Fragment implements AccountAPICallBack {
     }
 
     @Override
-    public void onCheckEmailExistence() { }
-
-    @Override
     public void onUsernameFailed() { }
 
     @Override
     public void onEmailFailed() { }
 
     @Override
-    public void onUserIsAbleToBeCreated() { }
-
-    @Override
     public void onFailure() { }
 
     @Override
-    public void onDeleteAccount() { }
+    public void onSuccess() {
+
+    }
 
     @Override
     public void onFailure(Throwable t) { }
