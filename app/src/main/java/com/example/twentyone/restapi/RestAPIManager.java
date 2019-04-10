@@ -6,23 +6,17 @@ import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
-import com.example.twentyone.model.data.RegisterErrorResponseData;
-import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
 import com.example.twentyone.restapi.callback.BloodAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
-import com.example.twentyone.restapi.callback.RegisterAPICallBack;
-import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
