@@ -3,14 +3,14 @@ package com.example.twentyone.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
 import com.example.twentyone.model.Validator;
-import com.example.twentyone.model.data.User;
-import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
@@ -20,6 +20,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,9 +36,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     private TextInputEditText username_text;
     private final String USERNAME_KEY = "username";
 
-    private final String TEMPORARY_USER_EMAIL = "temporary@creation.com";
-    private final String TEMPORARY_USER_PASSWORD = "_38LoLo38_";
-
     private TextInputLayout email_input;
     private TextInputEditText email_text;
     private final String EMAIL_KEY = "email";
@@ -44,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     private TextInputLayout password_input;
     private TextInputEditText password_text;
     private final String PASSWORD_KEY = "password";
+    private final String PREVIOUS_PASSWORD_STRENGTH = "strength";
 
     private TextInputLayout password_repeat_input;
     private TextInputEditText password_repeat_text;
@@ -58,6 +58,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     private String username;
     private String email;
     private String password;
+    private int prevStrength;
     private String repeatPassword;
 
 
@@ -80,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         email_text.setText(savedInstanceState.getString(EMAIL_KEY));
         password_text.setText(savedInstanceState.getString(PASSWORD_KEY));
         password_repeat_text.setText(savedInstanceState.getString(PASSWORD_REPEAT_KEY));
+        prevStrength = savedInstanceState.getInt(PREVIOUS_PASSWORD_STRENGTH, 0);
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -89,6 +91,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         outState.putString(EMAIL_KEY, email_text.getText().toString());
         outState.putString(PASSWORD_KEY, password_text.getText().toString());
         outState.putString(PASSWORD_REPEAT_KEY, password_repeat_text.getText().toString());
+        outState.putInt(PREVIOUS_PASSWORD_STRENGTH, prevStrength);
     }
 
 
@@ -124,6 +127,71 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
 
         password_input = findViewById(R.id.password_text_input);
         password_text = findViewById(R.id.password_edit_text);
+        color(prevStrength);
+
+        // Password strength
+        password_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int strength = auxiliarCalculateStrength(s.toString());
+                color(strength);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            private int auxiliarCalculateStrength(String password){
+                if (password == null){
+                    return 0;
+                }
+                if (password.length() > 6){
+                    return 6;
+                }else{
+                    return password.length();
+                }
+            }
+            private int calculateStrength(String password){
+                int strength = 0;
+
+                if (password.length() < Validator.PASSWORD_MIN_LENGTH){
+                    return 0;
+                }
+
+                // Comprovamos si tiene 1 y + números
+                //if (Pattern.matches("[0-9]", password)){
+                if (Pattern.matches("[0-9]+", password)){
+                    strength++;
+                }
+                // Comprovamos si tiene 1 y + MAYÚSCULAS
+                if (Pattern.matches("[A-Z]", password)){
+                    strength++;
+                }
+                if (Pattern.matches("[!#$%&'*+/=?^_`{|}~-]", password)){
+                    strength++;
+                }
+
+                if (strength == 3){
+                    if (Pattern.matches("[0-9]+", password)){
+                        strength++;
+                    }
+                    if (Pattern.matches("[A-Z]+", password)){
+                        strength++;
+                    }
+                    if (Pattern.matches("[!#$%&'*+/=?^_`{|}~-]+", password)){
+                        strength++;
+                    }
+                }
+
+                return strength;
+            }
+        });
 
         password_repeat_input = findViewById(R.id.password_repeat_text_input);
         password_repeat_text = findViewById(R.id.password_repeat_edit_text);
@@ -135,6 +203,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
                 validateFields();
             }
         });
+    }
+
+    private void color(int strength) {
+        // TODO: Color until strength
     }
 
 

@@ -12,8 +12,8 @@ public class Validator {
     private static final int USERNAME_MAX_LENGTH = 12;
 
     // Password limits
-    private static final int PASSWORD_MIN_LENGTH = 4;
-    private static final int PASSWORD_MAX_LENGTH = 12;
+    public static final int PASSWORD_MIN_LENGTH = 4;
+    public static final int PASSWORD_MAX_LENGTH = 12;
 
     // General validation return values
     public static final int CORRECT = 0;
