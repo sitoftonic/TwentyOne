@@ -207,25 +207,5 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void getAllBloodPressure(final BloodAPICallBack bloodAPICallBack) {
-        Log.d("LRM", "all points GET request");
-
-        Call<BloodPressure> call = restApiService.getAllBloodPressure("Bearer " + userToken.getIdToken());
-        call.enqueue(new Callback<BloodPressure>() {
-            @Override
-            public void onResponse(Call<BloodPressure> call, Response<BloodPressure> response) {
-                if (response.isSuccessful()) {
-                    bloodAPICallBack.onGetAllBloodPressure();
-                } else {
-                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BloodPressure> call, Throwable t) {
-                bloodAPICallBack.onFailure(t);
-            }
-        });
-    }
 
 }
