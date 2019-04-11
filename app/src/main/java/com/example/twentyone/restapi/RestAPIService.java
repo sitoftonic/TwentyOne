@@ -2,6 +2,7 @@ package com.example.twentyone.restapi;
 
 
 import com.example.twentyone.model.data.BloodPressure;
+import com.example.twentyone.model.data.KeyAndPassword;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
@@ -59,4 +60,6 @@ public interface RestAPIService {
     Call<Weight[]> getAllWeightByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
     @POST("/api/account/reset-password/init")
     Call<Void> resetPasswordInit(@Body String mail, @Header("Authorization") String token);
+    @POST("/api/account/reset-password/finish")
+    Call<Void> resetPasswordFinish(@Body KeyAndPassword keyAndPassword, @Header("Authorization") String token);
 }
