@@ -26,7 +26,7 @@ import retrofit2.http.QueryMap;
 
 public interface RestAPIService {
     @POST("/api/points")
-    Call<Points> postPoints(@Body Points points, @Header("Authorization") String token);
+    Call<Void> postPoints(@Body Points points, @Header("Authorization") String token);
     @GET("/api/points/{id}")
     Call<Points> getPointsById(@Path("id") Integer id, @Header("Authorization") String token);
     @POST("/api/authenticate")
