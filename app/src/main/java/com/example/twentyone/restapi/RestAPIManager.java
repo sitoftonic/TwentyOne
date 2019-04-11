@@ -28,6 +28,7 @@ public class RestAPIManager {
     //private static final String BASE_URL = "http://" + "your_ip:8080/";
     private static final String BASE_URL = "http://" + "android.byted.xyz/";
     private static final String ERROR_KEY_USERNAME = "userexists";
+    private static final String ERROR_TITLE_PASSWORD = "Incorrect password";
     private static final String ERROR_KEY_EMAIL = "emailexists";
 
 
@@ -197,13 +198,31 @@ public class RestAPIManager {
                 if (response.isSuccessful()) {
                     accountAPICallBack.onChangePassword();
                 } else {
-                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+
+                    try {
+                        String errorTitle = getErrorTitle(response);
+
+                        if (errorTitle.equals(ERROR_TITLE_PASSWORD)){
+                            accountAPICallBack.onPasswordDontMatch();
+                        }else{
+                            accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                        }
+
+                    } catch (IOException e) {
+                        accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    }
+
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
+            }
+
+            private String getErrorTitle(Response<Void> response) throws IOException {
+                String content = response.body().toString();
+                return new JsonParser().parse(content).getAsJsonObject().get("title").getAsString();
             }
         });
     }
