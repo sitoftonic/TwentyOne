@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 public class AddPointsDialog extends DialogFragment implements PointsAPICallBack {
 
@@ -37,6 +38,8 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     private TextInputLayout notes_input;
     private TextInputEditText notes_text;
 
+    private FragmentActivity activity;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -46,6 +49,8 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final View view = inflater.inflate(R.layout.dialog_add_points, null);
         initView(view);
+
+        activity = getActivity();
 
         builder.setTitle(R.string.add_points_title)
                 .setView(view)
@@ -103,11 +108,14 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
         Log.i("ADD-POINTS", "Date: " + date + " Exercise: " + s_exercise + " Eat: " + s_eat + " Drink: " + s_drink + " Notes: " + notes);
 
         RestAPIManager.getInstance().postPoints(new Points(date,s_exercise,s_eat,s_drink,notes),this);
+
+        //Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onPostPoints(Points points) {
-        Snackbar.make(getActivity().findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -132,6 +140,6 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
 
     @Override
     public void onFailure(Throwable t) {
-        Snackbar.make(getActivity().findViewById(R.id.main_coordinator) , R.string.add_points_toast_error, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_error, Snackbar.LENGTH_SHORT).show();
     }
 }
