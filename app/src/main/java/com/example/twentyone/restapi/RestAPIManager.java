@@ -187,7 +187,7 @@ public class RestAPIManager {
 
 
     public synchronized void changePassword(String oldPassword, String finalPassword, final AccountAPICallBack accountAPICallBack) {
-        Log.d("LRM", "all points GET request");
+        Log.d("LRM", "change password request");
 
         Call<Void> call = restApiService.changePassword(new PasswordChange(oldPassword,finalPassword), "Bearer " + userToken.getIdToken());
         call.enqueue(new Callback<Void>() {
