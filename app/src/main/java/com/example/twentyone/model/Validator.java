@@ -59,6 +59,103 @@ public class Validator {
         return valid;
     }
 
+    private int calculateStrength(String password){
+       if(password.length()<0 || isOnlyLLetters(password) || isOnlyMins(password)){
+           return 0;
+       }
+       else {
+           int mLetter = oneMLetter(password);
+           int number = oneNumber(password);
+           int special = oneSpecial(password);
+           int data = mLetter + number + special;
+           if(data == 1){
+                return 1;
+           }
+           else if(mLetter <2 && number <2&& special <2){
+               return data;
+           }
+           else if(onlyOneIsOne(mLetter,number,special)){
+               return 4;
+           }
+           else if(onlyTwoIsOne(mLetter,number,special)){
+               return 5;
+           }
+           return 6;
+       }
+    }
+
+    private boolean onlyTwoIsOne(int mLetter, int number, int special) {
+        if(mLetter==1&&number>1&&special>1){
+            return true;
+        }
+        if(mLetter>1&&number==1&&special>1){
+            return true;
+        }
+        return mLetter > 1 && number > 1 && special == 1;
+    }
+
+    private boolean onlyOneIsOne(int mLetter, int number, int special) {
+        if(mLetter==1&&number==1&&special>1){
+            return true;
+        }
+        if(mLetter==1&&number>1&&special==1){
+            return true;
+        }
+        return mLetter > 1 && number == 1 && special == 1;
+    }
+
+    private int oneSpecial(String password) {
+        int amunt = 0;
+        for(char c : password.toCharArray()){
+            boolean special = Pattern.matches(".*[^A-Za-z0-9].*",""+c);
+            if(special){
+                amunt++;
+            }
+        }
+        return amunt;
+    }
+
+    private int oneNumber(String password) {
+        int amunt=0;
+        for(char c : password.toCharArray()){
+            boolean number = Pattern.matches(".*\\d.*", c+"");
+            if(number){
+                amunt++;
+            }
+
+        }
+        return amunt;
+    }
+
+    private int oneMLetter(String password) {
+        int amunt = 0;
+        for(char c : password.toCharArray()){
+            if(c>='A'&&c<='Z'){
+                amunt++;
+            }
+        }
+        return amunt;
+    }
+
+
+    private boolean isOnlyMins(String password) {
+        for(char c : password.toCharArray()){
+            if(c>'z'||c<'a'){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isOnlyLLetters(String password) {
+        boolean number = Pattern.matches(".*\\d.*", password);
+        boolean special = Pattern.matches(".*[^A-Za-z0-9].*",password);
+        //boolean special = hasSpecial(password);
+        boolean min = !password.equals(password.toUpperCase());
+        boolean may = !password.equals(password.toLowerCase());
+        return !number && !special && min && !may;
+    }
+
     public int validateRegisterUsername(final String username) {
 
         if (username.length() == 0) {
@@ -119,5 +216,6 @@ public class Validator {
         }
         return false;
     }
+
 
 }
