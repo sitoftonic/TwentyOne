@@ -95,4 +95,47 @@ public class PointManager extends BloodWeightPointDataApiManager {
             }
         });
     }
+
+    protected synchronized void getAllByUser(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level, String search){
+        Log.d("LRM", "all points GET request");
+        //http://android.byted.xyz/api/points?page=1000&paged=true&sort.sorted=false&sort.unsorted=true
+        Map<String, String> map = new HashMap<>();
+        map.put("query","SELECT * FROM POINTS WHERE USER_ID = "+userToken.getIdToken()+ "AND (JHI_DATE LIKE '%"+search+"%' OR NOTES LIKE '%"+search+"%')");
+        map.put("page",String.valueOf(level));
+
+        Call<Points[]> call =  restApiService.getPointsByUser("Bearer " + userToken.getIdToken(),map);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length>0){
+                        if(response.body()[response.body().length-1].getUser().getId()!=Integer.parseInt(userToken.getIdToken())){
+                            for(Points p : response.body()){
+                                if(p.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
+                                    getGenListByUser.add(p);
+                                    continue;
+                                }
+                                break;
+                            }
+                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            return;
+                        }
+                        getGenListByUser.addAll(Arrays.asList(response.body()));
+                        getAllByUser(bwpgpsdapiCallBack,level+1);
+                    }
+                    else{
+                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                    }
+
+                } else {
+                    bwpgpsdapiCallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                bwpgpsdapiCallBack.onFailure(t);
+            }
+        });
+    }
 }

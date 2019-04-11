@@ -8,6 +8,7 @@ import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
+import com.example.twentyone.model.data.Weight;
 
 import java.util.ArrayList;
 
@@ -46,11 +47,14 @@ public interface RestAPIService {
     Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     //@GET("/api/_search/points")
     //Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
-    @GET("/api/blood_pressures")
-    Call<BloodPressure> getAllBloodPressure(@Header("Authorization") String token);
     @DELETE("/api/users/{login}")
     Call<Void> deleteUser(@Path("login") String login, @Header("Authorization") String token);
+    @GET("/api/blood_pressures")
     Call<BloodPressure[]> getAllBloodPressure(@Header("Authorization") String token,@QueryMap Map<String,String> params);
     @GET("/api/_search/blood_pressures")
     Call<BloodPressure[]> getAllBloodPressureByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
+    @GET("/api/_search/weights")
+    Call<Weight[]> getAllWeight(@Header("Authorization") String token, @QueryMap Map<String,String> params);
+    @GET("/api/weights")
+    Call<Weight[]> getAllWeightByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
 }
