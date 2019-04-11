@@ -28,6 +28,7 @@ public class RestAPIManager {
     //private static final String BASE_URL = "http://" + "your_ip:8080/";
     private static final String BASE_URL = "http://" + "android.byted.xyz/";
     private static final String ERROR_KEY_USERNAME = "userexists";
+    private static final String ERROR_ID_EXISTS = "idexists";
     private static final String ERROR_TITLE_PASSWORD = "Incorrect password";
     private static final String ERROR_EMAIL_NOT_FOUND = "Email address not registered";
     private static final String ERROR_RESET_KEY = "No user was found for this reset key";
@@ -80,24 +81,38 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void postPoints(Points points, final PointsAPICallBack pointsAPICallBack) {
-        final Points newUserPoints = points;
-        Call<Points> call = restApiService.postPoints(newUserPoints, "Bearer " + userToken.getIdToken());
+    public synchronized void postPoints(final Points points, final PointsAPICallBack pointsAPICallBack) {
+        Call<Void> call = restApiService.postPoints(points, "Bearer " + userToken.getIdToken());
 
-        call.enqueue(new Callback<Points>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Points> call, Response<Points> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
 
                 if (response.isSuccessful()) {
-                    pointsAPICallBack.onPostPoints(response.body());
+                    pointsAPICallBack.onPostPoints();
                 } else {
-                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    try {
+                        String errorKey = getErrorKey(response);
+                        if (errorKey.equals(ERROR_ID_EXISTS)){
+                            pointsAPICallBack.onPostPoints();
+                        }else{
+                            pointsAPICallBack.onBadRequest();
+                        }
+
+                    } catch (IOException e) {
+                        pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<Points> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 pointsAPICallBack.onFailure(t);
+            }
+
+            private String getErrorKey(Response<Void> response) throws IOException {
+                String content = response.errorBody().string();
+                return new JsonParser().parse(content).getAsJsonObject().get("errorKey").getAsString();
             }
         });
     }
@@ -302,5 +317,6 @@ public class RestAPIManager {
             }
         });
     }
+
 
 }
