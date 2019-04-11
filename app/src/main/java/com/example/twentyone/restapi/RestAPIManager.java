@@ -29,6 +29,8 @@ public class RestAPIManager {
     private static final String BASE_URL = "http://" + "android.byted.xyz/";
     private static final String ERROR_KEY_USERNAME = "userexists";
     private static final String ERROR_TITLE_PASSWORD = "Incorrect password";
+    private static final String ERROR_EMAIL_NOT_FOUND = "Email address not registered";
+    private static final String ERROR_RESET_KEY = "No user was found for this reset key";
     private static final String ERROR_KEY_EMAIL = "emailexists";
 
 
@@ -237,13 +239,29 @@ public class RestAPIManager {
                 if (response.isSuccessful()) {
                     accountAPICallBack.onResetPasswordInit();
                 } else {
-                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    try {
+                        String errorTitle = getErrorTitle(response);
+
+                        if (errorTitle.equals(ERROR_EMAIL_NOT_FOUND)){
+                            accountAPICallBack.onEmailNotFound();
+                        }else{
+                            accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                        }
+
+                    } catch (IOException e) {
+                        accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
+            }
+
+            private String getErrorTitle(Response<Void> response) throws IOException {
+                String content = response.body().toString();
+                return new JsonParser().parse(content).getAsJsonObject().get("title").getAsString();
             }
         });
     }
@@ -258,13 +276,29 @@ public class RestAPIManager {
                 if (response.isSuccessful()) {
                     accountAPICallBack.onResetPasswordFinish();
                 } else {
-                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    try {
+                        String errorTitle = getErrorTitle(response);
+
+                        if (errorTitle.equals(ERROR_RESET_KEY)){
+                            accountAPICallBack.onBadResetKey();
+                        }else{
+                            accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                        }
+
+                    } catch (IOException e) {
+                        accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
+            }
+
+            private String getErrorTitle(Response<Void> response) throws IOException {
+                String content = response.body().toString();
+                return new JsonParser().parse(content).getAsJsonObject().get("title").getAsString();
             }
         });
     }
