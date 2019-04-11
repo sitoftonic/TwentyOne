@@ -1,7 +1,9 @@
 package com.example.twentyone.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,6 +15,7 @@ import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
 import com.example.twentyone.dialogs.ResetPassDialog;
 import com.example.twentyone.model.Validator;
+import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
@@ -26,6 +29,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+
+import static com.example.twentyone.activities.LoadActivity.APP_IDENTIFIER;
 
 public class LoginActivity extends AppCompatActivity implements LoginAPICallBack {
 
@@ -45,6 +50,9 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     private MaterialButton signin_button;
     private MaterialButton forgot_button;
 
+    private String username;
+    private String password;
+
     private ProgressDialog progressDialog;
 
     private AnimationManager animationManager = AnimationManager.getInstance();
@@ -57,6 +65,8 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
         initToolbar();
         initView();
         initProgressDialog();
+
+
     }
 
 
@@ -76,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
         outState.putString(USERNAME_KEY, username_text.getText().toString());
         outState.putString(PASSWORD_KEY, password_text.getText().toString());
         outState.putBoolean(REMEMBER_KEY, remember.isChecked());
+
     }
 
     private void initProgressDialog() {
@@ -132,8 +143,8 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     private void validateFields() {
 
         // Store values at the time of the login attempt.
-        String username = username_text.getText().toString();
-        String password = password_text.getText().toString();
+        username = username_text.getText().toString();
+        password = password_text.getText().toString();
 
         boolean correct = false;
 
@@ -199,7 +210,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     public void switchToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("user", username_text.getText().toString());
+        intent.putExtra("user", username);
         Log.d("LOLO", "Launch main Activity");
         startActivity(intent);
     }
@@ -211,16 +222,23 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
     @Override
     public void onLoginSuccess(UserToken userToken) {
         Log.d("LOLO", "Login success");
-        progressDialog.dismiss();
+        if (remember.isChecked()){
+            // Guardar username y password en el mobil
+            SharedPreferences sharedPref = getSharedPreferences(APP_IDENTIFIER, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("username", username);
+            editor.putString("password", password);
+            editor.apply();
+        }
         switchToMainActivity();
     }
 
     @Override
     public void onFailure(Throwable t) {
-        Log.d("LOLO", "Login failed");
-        Log.d("LOLO", t.getMessage());
+
         progressDialog.dismiss();
         Snackbar.make(findViewById(R.id.activity_login) , R.string.login_toast_error, Snackbar.LENGTH_SHORT).show();
         animationManager.hapticError(this);
+
     }
 }
