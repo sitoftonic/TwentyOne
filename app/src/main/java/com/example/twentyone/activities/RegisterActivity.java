@@ -28,7 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class RegisterActivity extends AppCompatActivity implements RegisterAPICallBack, AccountAPICallBack, LoginAPICallBack {
+public abstract class RegisterActivity extends AppCompatActivity implements RegisterAPICallBack, AccountAPICallBack, LoginAPICallBack {
 
     private Toolbar toolbar;
 
@@ -319,6 +319,15 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     }
 
 
+    @Override
+    public void onResetPasswordFinish() {
+
+    }
+
+    @Override
+    public void onResetPasswordInit() {
+
+    }
 
     // Funciones vacías
     @Override
