@@ -208,4 +208,26 @@ public class RestAPIManager {
     }
 
 
+    public synchronized void resetPasswordInit(String mail, final AccountAPICallBack accountAPICallBack) {
+        Log.d("LRM", "change password request");
+
+        Call<Void> call = restApiService.resetPasswordInit(mail, "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    accountAPICallBack.onResetPasswordInit();
+                } else {
+                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+
 }
