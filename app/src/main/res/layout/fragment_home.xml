@@ -80,11 +80,16 @@
                         android:layout_margin="8dp"
                         android:textSize="24sp"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="8dp"
-                        android:text="@string/home_points_empty"/>
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipIcon="@drawable/ic_round_error_outline_24px"
+                        android:text="@string/home_points_empty"
+                        android:layout_margin="8dp"/>
+
+
 
                     <com.google.android.material.button.MaterialButton
                         android:layout_width="wrap_content"
@@ -119,11 +124,14 @@
                         android:layout_margin="8dp"
                         android:textSize="24sp"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="8dp"
-                        android:text="@string/home_blood_empty"/>
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipIcon="@drawable/ic_round_error_outline_24px"
+                        android:text="@string/home_blood_empty"
+                        android:layout_margin="8dp"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:layout_width="wrap_content"
@@ -159,6 +167,7 @@
                         android:layout_margin="8dp"
                         android:textSize="24sp" />
 
+                    <!--
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -170,20 +179,22 @@
                         style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="hello"/>
+                        android:text="hello"/>-->
 
                     <com.google.android.material.chip.Chip
                         style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:chipIcon="@drawable/ic_round_error_outline_24px"
-                        android:text="hello"/>
+                        android:text="@string/home_weight_empty"
+                        android:layout_margin="8dp"/>
 
+                    <!--
                     <com.google.android.material.chip.Chip
                         style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="hello"/>
+                        android:text="hello"/>-->
 
                     <com.google.android.material.button.MaterialButton
                         android:layout_width="wrap_content"
