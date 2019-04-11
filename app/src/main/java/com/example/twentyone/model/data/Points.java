@@ -21,16 +21,17 @@ public class Points {
     private Integer alcohol;
     @SerializedName("notes")
     @Expose
-    private Object notes;
+    private String notes;
     @SerializedName("user")
     @Expose
     private User user;
 
-    public Points(String date, Integer exercise, Integer meals, Integer alcohol) {
+    public Points(String date, Integer exercise, Integer meals, Integer alcohol, String notes) {
         this.date = date;
         this.exercise = exercise;
         this.meals = meals;
         this.alcohol = alcohol;
+        this.notes = notes;
     }
 
     public Integer getId() {
@@ -73,11 +74,11 @@ public class Points {
         this.alcohol = alcohol;
     }
 
-    public Object getNotes() {
+    public String getNotes() {
         return notes;
     }
 
-    public void setNotes(Object notes) {
+    public void setNotes(String notes) {
         this.notes = notes;
     }
 

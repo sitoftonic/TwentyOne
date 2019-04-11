@@ -2,13 +2,20 @@ package com.example.twentyone.restapi;
 
 import android.util.Log;
 
+import com.example.twentyone.model.data.BloodPressure;
+import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
+import com.example.twentyone.restapi.callback.AccountAPICallBack;
+import com.example.twentyone.restapi.callback.BloodAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
-import com.example.twentyone.restapi.callback.RegisterAPICallBack;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,11 +26,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestAPIManager {
     //private static final String BASE_URL = "http://" + "your_ip:8080/";
     private static final String BASE_URL = "http://" + "android.byted.xyz/";
+    private static final String ERROR_KEY_USERNAME = "userexists";
+    private static final String ERROR_KEY_EMAIL = "emailexists";
+
+
     private static RestAPIManager ourInstance;
     private Retrofit retrofit;
     private RestAPIService restApiService;
     private UserToken userToken;
-
 
     public static RestAPIManager getInstance() {
         if (ourInstance == null) {
@@ -109,7 +119,7 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void register(String username, String email, String password, final RegisterAPICallBack registerAPICallback) {
+    public synchronized void register(String username, String email, String password, final AccountAPICallBack accountAPICallBack) {
         UserData userData = new UserData(username, email, password);
         Call<Void> call = restApiService.register(userData);
 
@@ -118,15 +128,34 @@ public class RestAPIManager {
             public void onResponse(Call<Void> call, Response<Void> response) {
 
                 if (response.isSuccessful()) {
-                    registerAPICallback.onSuccess();
+                    accountAPICallBack.onSuccess();
                 } else {
-                    registerAPICallback.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    try {
+
+                        String errorKey = getErrorKey(response);
+
+                        if (errorKey.equals(ERROR_KEY_USERNAME)){
+                            accountAPICallBack.onUsernameFailed();
+                        }else{
+                            accountAPICallBack.onEmailFailed();
+                        }
+
+                    } catch (IOException e) {
+                        accountAPICallBack.onFailure();
+                    }
+                    Log.d("LOLO", "hola2");
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                registerAPICallback.onFailure(t);
+                accountAPICallBack.onFailure(t);
+            }
+
+
+            private String getErrorKey(Response<Void> response) throws IOException {
+                String content = response.errorBody().string();
+                return new JsonParser().parse(content).getAsJsonObject().get("errorKey").getAsString();
             }
         });
     }
@@ -155,4 +184,48 @@ public class RestAPIManager {
             }
         });
     }
+
+
+    public synchronized void changePassword(String oldPassword, String finalPassword, final AccountAPICallBack accountAPICallBack) {
+        Log.d("LRM", "change password request");
+
+        Call<Void> call = restApiService.changePassword(new PasswordChange(oldPassword,finalPassword), "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    accountAPICallBack.onChangePassword();
+                } else {
+                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void getAllBloodPressure(final BloodAPICallBack bloodAPICallBack) {
+        Log.d("LRM", "all points GET request");
+
+        Call<BloodPressure> call = restApiService.getAllBloodPressure("Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<BloodPressure>() {
+            @Override
+            public void onResponse(Call<BloodPressure> call, Response<BloodPressure> response) {
+                if (response.isSuccessful()) {
+                    bloodAPICallBack.onGetAllBloodPressure();
+                } else {
+                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure> call, Throwable t) {
+                bloodAPICallBack.onFailure(t);
+            }
+        });
+    }
+
 }
