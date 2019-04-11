@@ -57,4 +57,6 @@ public interface RestAPIService {
     Call<Weight[]> getAllWeight(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @GET("/api/weights")
     Call<Weight[]> getAllWeightByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
+    @POST("/api/account/reset-password/init")
+    Call<Void> resetPasswordInit(@Body String mail, @Header("Authorization") String token);
 }
