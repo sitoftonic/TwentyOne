@@ -82,39 +82,26 @@ public class RestAPIManager {
     }
 
     public synchronized void postPoints(final Points points, final PointsAPICallBack pointsAPICallBack) {
-        Call<Void> call = restApiService.postPoints(points, "Bearer " + userToken.getIdToken());
 
-        call.enqueue(new Callback<Void>() {
+        Call<Points> call = restApiService.postPoints(points, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<Points>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<Points> call, Response<Points> response) {
 
                 if (response.isSuccessful()) {
-                    pointsAPICallBack.onPostPoints();
+                    pointsAPICallBack.onPostPoints(response.body());
                 } else {
-                    try {
-                        String errorKey = getErrorKey(response);
-                        if (errorKey.equals(ERROR_ID_EXISTS)){
-                            pointsAPICallBack.onPostPoints();
-                        }else{
-                            pointsAPICallBack.onBadRequest();
-                        }
-
-                    } catch (IOException e) {
-                        pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
-                    }
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<Points> call, Throwable t) {
                 pointsAPICallBack.onFailure(t);
             }
-
-            private String getErrorKey(Response<Void> response) throws IOException {
-                String content = response.errorBody().string();
-                return new JsonParser().parse(content).getAsJsonObject().get("errorKey").getAsString();
-            }
         });
+
     }
 
     public synchronized void getPointsById( Integer id , final PointsAPICallBack pointsAPICallBack) {
