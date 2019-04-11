@@ -12,6 +12,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Calendar;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -59,11 +61,23 @@ public class AddPointsDialog extends DialogFragment {
 
         date_input = view.findViewById(R.id.add_points_date_input);
         date_text = view.findViewById(R.id.add_points_date_text);
+        setDate();
         exercise = view.findViewById(R.id.add_points_exercise);
         eat = view.findViewById(R.id.add_points_eat);
         drink = view.findViewById(R.id.add_points_drink);
         notes_input = view.findViewById(R.id.add_points_notes_input);
         notes_text = view.findViewById(R.id.add_points_notes_text);
+    }
+
+    private void setDate() {
+
+        Calendar calendar = Calendar.getInstance();
+
+        int c_day = calendar.get(Calendar.DAY_OF_MONTH);
+        int c_month = calendar.get(Calendar.MONTH);
+        int c_year = calendar.get(Calendar.YEAR);
+
+        date_text.setText(c_day + "/" + c_month + "/" + c_year);
     }
 
     private void savePoints() {
