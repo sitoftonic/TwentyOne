@@ -6,7 +6,7 @@ import com.example.twentyone.model.data.PointsWeek;
 import java.util.List;
 
 public interface PointsAPICallBack extends RestAPICallBack{
-    void onPostPoints();
+    void onPostPoints(Points points);
     void onGetPoints(Points points);
     void onGetPointsWeek(PointsWeek pointsWeek);
     void onBadRequest();
