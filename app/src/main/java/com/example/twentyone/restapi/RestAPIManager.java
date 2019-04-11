@@ -3,6 +3,7 @@ package com.example.twentyone.restapi;
 import android.util.Log;
 
 import com.example.twentyone.model.data.BloodPressure;
+import com.example.twentyone.model.data.KeyAndPassword;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
@@ -207,7 +208,6 @@ public class RestAPIManager {
         });
     }
 
-
     public synchronized void resetPasswordInit(String mail, final AccountAPICallBack accountAPICallBack) {
         Log.d("LRM", "change password request");
 
@@ -229,5 +229,25 @@ public class RestAPIManager {
         });
     }
 
+    public synchronized void resetPasswordFinish(String key, String newPassword, final AccountAPICallBack accountAPICallBack) {
+        Log.d("LRM", "change password request");
+
+        Call<Void> call = restApiService.resetPasswordFinish(new KeyAndPassword(key,newPassword), "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    accountAPICallBack.onResetPasswordFinish();
+                } else {
+                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+        });
+    }
 
 }
