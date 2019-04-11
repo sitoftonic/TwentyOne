@@ -8,11 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.example.twentyone.R;
+import com.example.twentyone.model.data.Points;
+import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.restapi.RestAPIManager;
+import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.fragment.app.DialogFragment;
 
-public class AddPointsDialog extends DialogFragment {
+public class AddPointsDialog extends DialogFragment implements PointsAPICallBack {
 
     private TextInputLayout date_input;
     private TextInputEditText date_text;
@@ -83,21 +88,50 @@ public class AddPointsDialog extends DialogFragment {
     private void savePoints() {
 
         final String date = date_text.getText().toString();
-        final boolean s_exercise = exercise.isChecked();
-        final boolean s_eat = eat.isChecked();
-        final boolean s_drink = drink.isChecked();
+        int s_exercise = 0;
+        int s_eat = 0;
+        int s_drink = 0;
+
+        if (exercise.isChecked()) s_exercise = 1;
+        if (eat.isChecked()) s_eat = 1;
+        if (exercise.isChecked()) s_drink = 1;
+
+
+
         final String notes = notes_text.getText().toString();
 
         Log.i("ADD-POINTS", "Date: " + date + " Exercise: " + s_exercise + " Eat: " + s_eat + " Drink: " + s_drink + " Notes: " + notes);
 
-        boolean state = true;
+        RestAPIManager.getInstance().postPoints(new Points(date,s_exercise,s_eat,s_drink,notes),this);
+    }
 
-        //TODO ADD POINTS TO BACK-END
+    @Override
+    public void onPostPoints(Points points) {
+        Snackbar.make(getActivity().findViewById(R.id.main) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
+    }
 
-        if (state) {
-            Snackbar.make(getActivity().findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
-        } else {
-            Snackbar.make(getActivity().findViewById(R.id.main_coordinator) , R.string.add_points_toast_error, Snackbar.LENGTH_SHORT).show();
-        }
+    @Override
+    public void onGetPoints(Points points) {
+
+    }
+
+    @Override
+    public void onGetPointsWeek(PointsWeek pointsWeek) {
+
+    }
+
+    @Override
+    public void onBadRequest() {
+
+    }
+
+    @Override
+    public void onFinishedCallback(List<Points> pointsList) {
+
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        Snackbar.make(getActivity().findViewById(R.id.main_coordinator) , R.string.add_points_toast_error, Snackbar.LENGTH_SHORT).show();
     }
 }
