@@ -104,6 +104,29 @@ public class RestAPIManager {
 
     }
 
+    public synchronized void postBloodPressure(final BloodPressure bloodPressure, final BloodAPICallBack bloodAPICallBack) {
+
+        Call<BloodPressure> call = restApiService.postBloodPressure(bloodPressure, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<BloodPressure>() {
+            @Override
+            public void onResponse(Call<BloodPressure> call, Response<BloodPressure> response) {
+
+                if (response.isSuccessful()) {
+                    bloodAPICallBack.onPostBloodPressure(response.body());
+                } else {
+                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure> call, Throwable t) {
+                bloodAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
     public synchronized void getPointsById( Integer id , final PointsAPICallBack pointsAPICallBack) {
         Call<Points> call = restApiService.getPointsById(id, "Bearer " + userToken.getIdToken());
 

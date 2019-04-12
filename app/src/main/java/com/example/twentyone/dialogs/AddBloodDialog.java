@@ -5,13 +5,17 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.example.twentyone.R;
+import com.example.twentyone.model.data.BloodPressure;
+import com.example.twentyone.restapi.callback.BloodAPICallBack;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-public class AddBloodDialog extends DialogFragment {
+public class AddBloodDialog extends DialogFragment implements BloodAPICallBack {
 
     @NonNull
     @Override
@@ -34,5 +38,25 @@ public class AddBloodDialog extends DialogFragment {
         // Create the AlertDialog object and return it
 
         return builder.create();
+    }
+
+    @Override
+    public void onGetAllBloodPressure() {
+
+    }
+
+    @Override
+    public void onPostBloodPressure(BloodPressure bloodPressure) {
+
+    }
+
+    @Override
+    public void onFinishedCallback(List<BloodPressure> bloodList) {
+
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+
     }
 }
