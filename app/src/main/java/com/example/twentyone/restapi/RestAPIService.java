@@ -5,6 +5,7 @@ import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.model.data.Preferences;
 import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserToken;
@@ -57,4 +58,8 @@ public interface RestAPIService {
     Call<Weight[]> getAllWeight(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @GET("/api/weights")
     Call<Weight[]> getAllWeightByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
+    @GET("/api/_search/preferences")
+    Call<Preferences[]> getAllPreferences(@Header("Authorization") String token, @QueryMap Map<String,String> params);
+    @GET("/api/preferences")
+    Call<Preferences[]> getAllPreferencesByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
 }
