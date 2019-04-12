@@ -93,21 +93,17 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     private void savePoints() {
 
         final String date = date_text.getText().toString();
-        int s_exercise = 0;
-        int s_eat = 0;
-        int s_drink = 0;
+        int s_exercise = 0, s_eat = 0, s_drink = 0;
 
         if (exercise.isChecked()) s_exercise = 1;
         if (eat.isChecked()) s_eat = 1;
         if (drink.isChecked()) s_drink = 1;
 
-
-
         final String notes = notes_text.getText().toString();
 
         Log.i("ADD-POINTS", "Date: " + date + " Exercise: " + s_exercise + " Eat: " + s_eat + " Drink: " + s_drink + " Notes: " + notes);
 
-        RestAPIManager.getInstance().postPoints(new Points(date,s_exercise,s_eat,s_drink,notes),this);
+        RestAPIManager.getInstance().postPoints(new Points(date, s_exercise, s_eat, s_drink, notes),this);
 
         //Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
 
