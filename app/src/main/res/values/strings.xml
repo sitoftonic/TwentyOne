@@ -131,6 +131,8 @@
     <string name="add_blood_user">User</string>
     <string name="add_blood_save">Save</string>
     <string name="add_blood_cancel">Cancel</string>
+    <string name="add_blood_toast_success">Blood Added Successfully</string>
+    <string name="add_blood_toast_error">Error Adding Blood</string>
 
     <!--Weight-->
     <string name="weight_search">Search for Weight</string>
