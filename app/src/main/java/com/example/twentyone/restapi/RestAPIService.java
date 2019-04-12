@@ -6,6 +6,7 @@ import com.example.twentyone.model.data.KeyAndPassword;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.model.data.Preferences;
 import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
 import com.example.twentyone.model.data.UserPreferences;
@@ -56,6 +57,10 @@ public interface RestAPIService {
     Call<Weight[]> getAllWeight(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @GET("/api/weights")
     Call<Weight[]> getAllWeightByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
+    @GET("/api/_search/preferences")
+    Call<UserPreferences[]> getAllPreferences(@Header("Authorization") String token, @QueryMap Map<String,String> params);
+    @GET("/api/preferences")
+    Call<UserPreferences[]> getAllPreferencesByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
     @POST("/api/account/reset-password/init")
     Call<Void> resetPasswordInit(@Body String mail, @Header("Authorization") String token);
     @POST("/api/account/reset-password/finish")
