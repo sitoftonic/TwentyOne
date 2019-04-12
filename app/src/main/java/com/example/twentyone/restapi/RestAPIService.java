@@ -43,15 +43,8 @@ public interface RestAPIService {
     Call<Points[]> getAllPoints(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @POST("/api/account/change-password")
     Call<Void> changePassword(@Body PasswordChange passwordChange, @Header("Authorization") String token);
-    @GET("/api/_search/users/{query}")
-    Call<ArrayList<User>> checkUserExistence(@Path("query") String query, @Header("Authorization") String token);
-    @GET("/api/users/{login}")
-    Call<User> getUser(@Path("login") String login);
-    Call<User> checkUserExistence(@Path("query") String query);
     @GET("/api/_search/points")
     Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
-    //@GET("/api/_search/points")
-    //Call<Points[]> getPointsByUser(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @DELETE("/api/users/{login}")
     Call<Void> deleteUser(@Path("login") String login, @Header("Authorization") String token);
     @GET("/api/blood_pressures")
