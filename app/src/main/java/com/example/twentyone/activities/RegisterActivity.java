@@ -1,12 +1,17 @@
 package com.example.twentyone.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
@@ -195,11 +200,23 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
 
         password_repeat_input = findViewById(R.id.password_repeat_text_input);
         password_repeat_text = findViewById(R.id.password_repeat_edit_text);
+        password_repeat_text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    hideSoftKey(password_repeat_text);
+                    validateFields();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         register_button = findViewById(R.id.register_button);
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKey(password_repeat_text);
                 validateFields();
             }
         });
@@ -210,6 +227,11 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     }
 
 
+    private void hideSoftKey(View v) {
+        v.clearFocus();
+        InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
     private void validateFields() {
 
         // Store values at the time of the login attempt.
@@ -319,6 +341,15 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
     }
 
 
+    @Override
+    public void onResetPasswordFinish() {
+
+    }
+
+    @Override
+    public void onResetPasswordInit() {
+
+    }
 
     // Funciones vacías
     @Override
@@ -348,6 +379,21 @@ public class RegisterActivity extends AppCompatActivity implements RegisterAPICa
         Log.d("LOLO", "Email failed");
         username_input.setError(getString(R.string.register_email_error_alreadyExists));
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onPasswordDontMatch() {
+
+    }
+
+    @Override
+    public void onEmailNotFound() {
+
+    }
+
+    @Override
+    public void onBadResetKey() {
+
     }
 
 

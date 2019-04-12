@@ -64,7 +64,6 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 new AddPointsDialog().show(getChildFragmentManager(), "dialog");
-
             }
         });
 

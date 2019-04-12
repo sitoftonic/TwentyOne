@@ -93,4 +93,48 @@ public class BloodManager extends BloodWeightPointDataApiManager {
             }
         });
     }
+
+    protected synchronized void getAllByUser(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level, String search){
+        Log.d("LRM", "all points GET request");
+        //http://android.byted.xyz/api/points?page=1000&paged=true&sort.sorted=false&sort.unsorted=true
+        Map<String, String> map = new HashMap<>();
+        map.put("query","SELECT * FROM BLOOD_PRESSURE WHERE USER_ID = "+userToken.getIdToken()+ "AND (TIMESTAMP like '%"
+                +search+"%' OR SYSTOLIC like '%"+search+"%' OR DIASTOLIC like '%"+5+"%')");
+        map.put("page",String.valueOf(level));
+
+        Call<BloodPressure[]> call =  restApiService.getAllBloodPressureByUser("Bearer " + userToken.getIdToken(),map);
+        call.enqueue(new Callback<BloodPressure[]>() {
+            @Override
+            public void onResponse(Call<BloodPressure[]> call, Response<BloodPressure[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length>0){
+                        if(response.body()[response.body().length-1].getUser().getId()!=Integer.parseInt(userToken.getIdToken())){
+                            for(BloodPressure b : response.body()){
+                                if(b.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
+                                    getGenListByUser.add(b);
+                                    continue;
+                                }
+                                break;
+                            }
+                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            return;
+                        }
+                        getGenListByUser.addAll(Arrays.asList(response.body()));
+                        getAllByUser(bwpgpsdapiCallBack,level+1);
+                    }
+                    else{
+                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                    }
+
+                } else {
+                    bwpgpsdapiCallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure[]> call, Throwable t) {
+                bwpgpsdapiCallBack.onFailure(t);
+            }
+        });
+    }
 }

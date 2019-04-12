@@ -71,25 +71,6 @@
                 android:lines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_blood_user_input"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:defaultFocusHighlightEnabled="true"
-            android:hint="@string/add_blood_user"
-            app:boxStrokeColor="@color/colorAccent"
-            app:boxStrokeWidth="2dp"
-            app:hintEnabled="true">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/add_blood_user_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
-
     </LinearLayout>
 
 </ScrollView>

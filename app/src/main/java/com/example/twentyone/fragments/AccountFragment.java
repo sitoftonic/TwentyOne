@@ -71,6 +71,16 @@ public class AccountFragment extends Fragment implements AccountAPICallBack {
     }
 
     @Override
+    public void onResetPasswordFinish() {
+
+    }
+
+    @Override
+    public void onResetPasswordInit() {
+
+    }
+
+    @Override
     public void onChangePassword() {
         /* TODO action after changed password */
     }
@@ -80,6 +90,21 @@ public class AccountFragment extends Fragment implements AccountAPICallBack {
 
     @Override
     public void onEmailFailed() { }
+
+    @Override
+    public void onPasswordDontMatch() {
+
+    }
+
+    @Override
+    public void onEmailNotFound() {
+
+    }
+
+    @Override
+    public void onBadResetKey() {
+
+    }
 
     @Override
     public void onFailure() { }

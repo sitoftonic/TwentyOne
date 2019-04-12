@@ -29,8 +29,14 @@ public class BloodWeightPointDataApiManager {
         getGenListByUser = new LinkedList<>();
         getAllByUser(bwpgpsdapiCallBack,0);
     }
+    protected synchronized void getAllByUser(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level) {
+    }
 
-    protected synchronized void getAllByUser(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level){
+    public synchronized void getAllByUser(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack,String search){
+        getGenListByUser = new LinkedList<>();
+        getAllByUser(bwpgpsdapiCallBack,0,search);
+    }
+    protected synchronized void getAllByUser(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level,final String search){
 
     }
 }

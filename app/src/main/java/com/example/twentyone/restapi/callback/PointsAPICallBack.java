@@ -9,5 +9,6 @@ public interface PointsAPICallBack extends RestAPICallBack{
     void onPostPoints(Points points);
     void onGetPoints(Points points);
     void onGetPointsWeek(PointsWeek pointsWeek);
+    void onBadRequest();
     void onFinishedCallback(List<Points> pointsList);
 }

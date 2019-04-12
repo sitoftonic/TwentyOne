@@ -8,8 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.twentyone.AnimationManager;
 import com.example.twentyone.R;
@@ -119,6 +123,18 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
 
         password_input = findViewById(R.id.password_text_input);
         password_text = findViewById(R.id.password_edit_text);
+        password_text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    hideSoftKey(password_text);
+                    validateFields();
+                    return true;
+                }
+
+                return false;
+            }
+        });
 
         remember = findViewById(R.id.remember_switch);
 
@@ -127,6 +143,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
+                hideSoftKey(password_text);
                 validateFields();
             }
         });
@@ -154,6 +171,12 @@ public class LoginActivity extends AppCompatActivity implements LoginAPICallBack
             RestAPIManager.getInstance().getUserToken(username, password, this);
             progressDialog.show();
         }
+    }
+
+    private void hideSoftKey(View v) {
+        v.clearFocus();
+        InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
     private boolean isUsernameValid(String username) {
