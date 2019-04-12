@@ -86,5 +86,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
     }
 
 
+    public List<PointsItem> getPoints() {
+        return mData;
+    }
+
+    public void setPoints(List<PointsItem> data) {
+        this.mData = data;
+    }
 
 }
