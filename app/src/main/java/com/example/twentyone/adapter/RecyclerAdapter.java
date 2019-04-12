@@ -1,12 +1,15 @@
 package com.example.twentyone.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.twentyone.R;
+import com.example.twentyone.activities.PointsDetailActivity;
 import com.example.twentyone.model.PointsItem;
 
 import java.util.List;
@@ -34,10 +37,21 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final CustomViewHolder holder, int position) {
         
         PointsItem current = mData.get(position);
         holder.setData(current, position);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("LISTTT", "viewPressed -> " + ((TextView)holder.itemView.findViewById(R.id.item_subTitle)).getText());
+                Context context = v.getContext();
+                Intent intent = new Intent(context, PointsDetailActivity.class);
+                intent.putExtra("note_id", ((TextView)holder.itemView.findViewById(R.id.item_subTitle)).getText());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -53,7 +67,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
         int position;
         PointsItem current;
 
-        public CustomViewHolder(@NonNull View itemView) {
+        public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
 
             title = itemView.findViewById(R.id.item_title);
@@ -72,5 +86,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
     }
 
 
+    public List<PointsItem> getPoints() {
+        return mData;
+    }
+
+    public void setPoints(List<PointsItem> data) {
+        this.mData = data;
+    }
 
 }

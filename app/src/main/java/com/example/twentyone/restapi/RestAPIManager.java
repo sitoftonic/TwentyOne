@@ -3,15 +3,20 @@ package com.example.twentyone.restapi;
 import android.util.Log;
 
 import com.example.twentyone.model.data.BloodPressure;
+import com.example.twentyone.model.data.KeyAndPassword;
 import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.UserData;
+import com.example.twentyone.model.data.UserPreferences;
 import com.example.twentyone.model.data.UserToken;
+import com.example.twentyone.model.data.Weight;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
 import com.example.twentyone.restapi.callback.BloodAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
+import com.example.twentyone.restapi.callback.PreferencesAPICallBack;
+import com.example.twentyone.restapi.callback.WeightAPICallBack;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
@@ -27,6 +32,10 @@ public class RestAPIManager {
     //private static final String BASE_URL = "http://" + "your_ip:8080/";
     private static final String BASE_URL = "http://" + "android.byted.xyz/";
     private static final String ERROR_KEY_USERNAME = "userexists";
+    private static final String ERROR_ID_EXISTS = "idexists";
+    private static final String ERROR_TITLE_PASSWORD = "Incorrect password";
+    private static final String ERROR_EMAIL_NOT_FOUND = "Email address not registered";
+    private static final String ERROR_RESET_KEY = "No user was found for this reset key";
     private static final String ERROR_KEY_EMAIL = "emailexists";
 
 
@@ -76,9 +85,9 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void postPoints(Points points, final PointsAPICallBack pointsAPICallBack) {
-        final Points newUserPoints = points;
-        Call<Points> call = restApiService.postPoints(newUserPoints, "Bearer " + userToken.getIdToken());
+    public synchronized void postPoints(final Points points, final PointsAPICallBack pointsAPICallBack) {
+
+        Call<Points> call = restApiService.postPoints(points, "Bearer " + userToken.getIdToken());
 
         call.enqueue(new Callback<Points>() {
             @Override
@@ -96,6 +105,53 @@ public class RestAPIManager {
                 pointsAPICallBack.onFailure(t);
             }
         });
+
+    }
+
+    public synchronized void postBloodPressure(final BloodPressure bloodPressure, final BloodAPICallBack bloodAPICallBack) {
+
+        Call<BloodPressure> call = restApiService.postBloodPressure(bloodPressure, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<BloodPressure>() {
+            @Override
+            public void onResponse(Call<BloodPressure> call, Response<BloodPressure> response) {
+
+                if (response.isSuccessful()) {
+                    bloodAPICallBack.onPostBloodPressure(response.body());
+                } else {
+                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure> call, Throwable t) {
+                bloodAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
+    public synchronized void postWeights(final Weight weight, final WeightAPICallBack weightAPICallBack) {
+
+        Call<Weight> call = restApiService.postWeights(weight, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<Weight>() {
+            @Override
+            public void onResponse(Call<Weight> call, Response<Weight> response) {
+
+                if (response.isSuccessful()) {
+                    weightAPICallBack.onPostWeights(response.body());
+                } else {
+                    weightAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Weight> call, Throwable t) {
+                weightAPICallBack.onFailure(t);
+            }
+        });
+
     }
 
     public synchronized void getPointsById( Integer id , final PointsAPICallBack pointsAPICallBack) {
@@ -196,7 +252,20 @@ public class RestAPIManager {
                 if (response.isSuccessful()) {
                     accountAPICallBack.onChangePassword();
                 } else {
-                    accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+
+                    try {
+                        String errorTitle = getErrorTitle(response);
+
+                        if (errorTitle.equals(ERROR_TITLE_PASSWORD)){
+                            accountAPICallBack.onPasswordDontMatch();
+                        }else{
+                            accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                        }
+
+                    } catch (IOException e) {
+                        accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    }
+
                 }
             }
 
@@ -204,8 +273,112 @@ public class RestAPIManager {
             public void onFailure(Call<Void> call, Throwable t) {
                 accountAPICallBack.onFailure(t);
             }
+
+            private String getErrorTitle(Response<Void> response) throws IOException {
+                String content = response.body().toString();
+                return new JsonParser().parse(content).getAsJsonObject().get("title").getAsString();
+            }
         });
     }
+
+    public synchronized void resetPasswordInit(String mail, final AccountAPICallBack accountAPICallBack) {
+        Log.d("LRM", "change password request");
+
+        Call<Void> call = restApiService.resetPasswordInit(mail, "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    accountAPICallBack.onResetPasswordInit();
+                } else {
+                    try {
+                        String errorTitle = getErrorTitle(response);
+
+                        if (errorTitle.equals(ERROR_EMAIL_NOT_FOUND)){
+                            accountAPICallBack.onEmailNotFound();
+                        }else{
+                            accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                        }
+
+                    } catch (IOException e) {
+                        accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+
+            private String getErrorTitle(Response<Void> response) throws IOException {
+                String content = response.body().toString();
+                return new JsonParser().parse(content).getAsJsonObject().get("title").getAsString();
+            }
+        });
+    }
+
+    public synchronized void resetPasswordFinish(String key, String newPassword, final AccountAPICallBack accountAPICallBack) {
+        Log.d("LRM", "change password request");
+
+        Call<Void> call = restApiService.resetPasswordFinish(new KeyAndPassword(key,newPassword), "Bearer " + userToken.getIdToken());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    accountAPICallBack.onResetPasswordFinish();
+                } else {
+                    try {
+                        String errorTitle = getErrorTitle(response);
+
+                        if (errorTitle.equals(ERROR_RESET_KEY)){
+                            accountAPICallBack.onBadResetKey();
+                        }else{
+                            accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                        }
+
+                    } catch (IOException e) {
+                        accountAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                accountAPICallBack.onFailure(t);
+            }
+
+            private String getErrorTitle(Response<Void> response) throws IOException {
+                String content = response.body().toString();
+                return new JsonParser().parse(content).getAsJsonObject().get("title").getAsString();
+            }
+        });
+    }
+
+
+    public synchronized void postUserPreferences(final UserPreferences userPreferences, final PreferencesAPICallBack preferencesAPICallBack) {
+
+        Call<UserPreferences> call = restApiService.getUserPreferences(userPreferences, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<UserPreferences>() {
+            @Override
+            public void onResponse(Call<UserPreferences> call, Response<UserPreferences> response) {
+
+                if (response.isSuccessful()) {
+                    preferencesAPICallBack.onGetPreferences(response.body());
+                } else {
+                    preferencesAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserPreferences> call, Throwable t) {
+                preferencesAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
 
 
 }

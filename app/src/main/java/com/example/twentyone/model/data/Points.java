@@ -1,7 +1,13 @@
 package com.example.twentyone.model.data;
 
+import android.annotation.SuppressLint;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Points {
     @SerializedName("id")
@@ -27,7 +33,7 @@ public class Points {
     private User user;
 
     public Points(String date, Integer exercise, Integer meals, Integer alcohol, String notes) {
-        this.date = date;
+        this.date = changeDateFormat(date);
         this.exercise = exercise;
         this.meals = meals;
         this.alcohol = alcohol;
@@ -88,6 +94,21 @@ public class Points {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String changeDateFormat(String oldDateString) {
+        final String OLD_FORMAT = "dd/MM/yyyy";
+        final String NEW_FORMAT = "yyyy-MM-dd";
+
+        try {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+            Date d = sdf.parse(oldDateString);
+            sdf.applyPattern(NEW_FORMAT);
+            return sdf.format(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return oldDateString;
     }
 
     @Override

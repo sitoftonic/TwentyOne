@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface BloodAPICallBack extends RestAPICallBack {
     void onGetAllBloodPressure();
-
+    void onPostBloodPressure(BloodPressure bloodPressure);
     void onFinishedCallback(List<BloodPressure> bloodList);
 }

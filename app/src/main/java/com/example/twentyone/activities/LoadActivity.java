@@ -83,4 +83,7 @@ public class LoadActivity extends AppCompatActivity implements LoginAPICallBack 
         Log.d("LOLO", "Going to Launch Activity");
         startActivity(intent);
     }
+
+
+    // I WANTED TO DO THE 100 COMMIT
 }
