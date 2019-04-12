@@ -99,7 +99,7 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
 
         if (exercise.isChecked()) s_exercise = 1;
         if (eat.isChecked()) s_eat = 1;
-        if (exercise.isChecked()) s_drink = 1;
+        if (drink.isChecked()) s_drink = 1;
 
 
 
