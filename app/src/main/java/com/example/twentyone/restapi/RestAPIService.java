@@ -58,9 +58,9 @@ public interface RestAPIService {
     @GET("/api/weights")
     Call<Weight[]> getAllWeightByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
     @GET("/api/_search/preferences")
-    Call<Preferences[]> getAllPreferences(@Header("Authorization") String token, @QueryMap Map<String,String> params);
+    Call<UserPreferences[]> getAllPreferences(@Header("Authorization") String token, @QueryMap Map<String,String> params);
     @GET("/api/preferences")
-    Call<Preferences[]> getAllPreferencesByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
+    Call<UserPreferences[]> getAllPreferencesByUser(@Header("Authorization") String token,@QueryMap Map<String,String> params);
     @POST("/api/account/reset-password/init")
     Call<Void> resetPasswordInit(@Body String mail, @Header("Authorization") String token);
     @POST("/api/account/reset-password/finish")

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.Preferences;
+import com.example.twentyone.model.data.UserPreferences;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.BloodWeightPointDataApiManager;
 import com.example.twentyone.restapi.RestAPIService;
@@ -27,10 +28,10 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
 
         Map<String,String> data = new HashMap<>();
         data.put("page",String.valueOf(level));
-        Call<Preferences[]> call = restApiService.getAllPreferences("Bearer " + userToken.getIdToken(),data);
-        call.enqueue(new Callback<Preferences[]>() {
+        Call<UserPreferences[]> call = restApiService.getAllPreferences("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<UserPreferences[]>() {
             @Override
-            public void onResponse(Call<Preferences[]> call, Response<Preferences[]> response) {
+            public void onResponse(Call<UserPreferences[]> call, Response<UserPreferences[]> response) {
                 if (response.isSuccessful()) {
                     if(response.body().length>0){
                         genList.addAll(Arrays.asList(response.body()));
@@ -45,7 +46,7 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
             }
 
             @Override
-            public void onFailure(Call<Preferences[]> call, Throwable t) {
+            public void onFailure(Call<UserPreferences[]> call, Throwable t) {
                 bwpgpsdapiCallBack.onFailure(t);
             }
         });
@@ -59,16 +60,16 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
         map.put("query","SELECT * FROM PREFERENCES WHERE USER_ID = "+userToken.getIdToken());
         map.put("page",String.valueOf(level));
 
-        Call<Preferences[]> call =  restApiService.getAllPreferencesByUser("Bearer " + userToken.getIdToken(),map);
-        call.enqueue(new Callback<Preferences[]>() {
+        Call<UserPreferences[]> call =  restApiService.getAllPreferencesByUser("Bearer " + userToken.getIdToken(),map);
+        call.enqueue(new Callback<UserPreferences[]>() {
             @Override
-            public void onResponse(Call<Preferences[]> call, Response<Preferences[]> response) {
+            public void onResponse(Call<UserPreferences[]> call, Response<UserPreferences[]> response) {
                 if (response.isSuccessful()) {
                     if(response.body().length>0){
                         if(response.body()[response.body().length-1].getUser().getId()!=Integer.parseInt(userToken.getIdToken())){
-                            for(Preferences p : response.body()){
-                                if(p.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
-                                    getGenListByUser.add(p);
+                            for(UserPreferences up : response.body()){
+                                if(up.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
+                                    getGenListByUser.add(up);
                                     continue;
                                 }
                                 break;
@@ -89,7 +90,7 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
             }
 
             @Override
-            public void onFailure(Call<Preferences[]> call, Throwable t) {
+            public void onFailure(Call<UserPreferences[]> call, Throwable t) {
                 bwpgpsdapiCallBack.onFailure(t);
             }
         });
@@ -103,16 +104,16 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
                 +search+"%' OR WEIGHT_UNITS like '%"+search+"%')");
         map.put("page",String.valueOf(level));
 
-        Call<Preferences[]> call =  restApiService.getAllPreferencesByUser("Bearer " + userToken.getIdToken(),map);
-        call.enqueue(new Callback<Preferences[]>() {
+        Call<UserPreferences[]> call =  restApiService.getAllPreferencesByUser("Bearer " + userToken.getIdToken(),map);
+        call.enqueue(new Callback<UserPreferences[]>() {
             @Override
-            public void onResponse(Call<Preferences[]> call, Response<Preferences[]> response) {
+            public void onResponse(Call<UserPreferences[]> call, Response<UserPreferences[]> response) {
                 if (response.isSuccessful()) {
                     if(response.body().length>0){
                         if(response.body()[response.body().length-1].getUser().getId()!=Integer.parseInt(userToken.getIdToken())){
-                            for(Preferences p : response.body()){
-                                if(p.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
-                                    getGenListByUser.add(p);
+                            for(UserPreferences up : response.body()){
+                                if(up.getUser().getId()==Integer.parseInt(userToken.getIdToken())){
+                                    getGenListByUser.add(up);
                                     continue;
                                 }
                                 break;
@@ -133,7 +134,7 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
             }
 
             @Override
-            public void onFailure(Call<Preferences[]> call, Throwable t) {
+            public void onFailure(Call<UserPreferences[]> call, Throwable t) {
                 bwpgpsdapiCallBack.onFailure(t);
             }
         });
