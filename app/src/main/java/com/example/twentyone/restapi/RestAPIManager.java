@@ -8,12 +8,14 @@ import com.example.twentyone.model.data.PasswordChange;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.UserData;
+import com.example.twentyone.model.data.UserPreferences;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.model.data.Weight;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
 import com.example.twentyone.restapi.callback.BloodAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
+import com.example.twentyone.restapi.callback.PreferencesAPICallBack;
 import com.example.twentyone.restapi.callback.WeightAPICallBack;
 import com.google.gson.JsonParser;
 
@@ -352,6 +354,31 @@ public class RestAPIManager {
             }
         });
     }
+
+
+    public synchronized void postUserPreferences(final UserPreferences userPreferences, final PreferencesAPICallBack preferencesAPICallBack) {
+
+        Call<UserPreferences> call = restApiService.getUserPreferences(userPreferences, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<UserPreferences>() {
+            @Override
+            public void onResponse(Call<UserPreferences> call, Response<UserPreferences> response) {
+
+                if (response.isSuccessful()) {
+                    preferencesAPICallBack.onGetPreferences(response.body());
+                } else {
+                    preferencesAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserPreferences> call, Throwable t) {
+                preferencesAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
 
 
 }

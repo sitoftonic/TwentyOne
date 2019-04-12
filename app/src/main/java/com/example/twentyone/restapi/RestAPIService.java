@@ -8,6 +8,7 @@ import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.model.data.User;
 import com.example.twentyone.model.data.UserData;
+import com.example.twentyone.model.data.UserPreferences;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.model.data.Weight;
 
@@ -59,4 +60,6 @@ public interface RestAPIService {
     Call<Void> resetPasswordInit(@Body String mail, @Header("Authorization") String token);
     @POST("/api/account/reset-password/finish")
     Call<Void> resetPasswordFinish(@Body KeyAndPassword keyAndPassword, @Header("Authorization") String token);
+    @POST("/api/preferences")
+    Call<UserPreferences> getUserPreferences(@Body UserPreferences userPreferences, @Header("Authorization") String token);
 }
