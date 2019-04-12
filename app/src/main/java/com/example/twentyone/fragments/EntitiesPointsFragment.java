@@ -20,6 +20,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -35,6 +37,7 @@ public class EntitiesPointsFragment extends Fragment {
 
     private RecyclerView recycler;
     private RecyclerAdapter adapter;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,12 +118,24 @@ public class EntitiesPointsFragment extends Fragment {
         InputMethodManager in = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(search_text.getWindowToken(), 0);
 
+
+        adapter.getPoints().clear();
+
         //TODO SEARCH
+        String search = search_text.getText().toString();
+
+
+
+        adapter.setPoints(PointsItem.getData2());
+        adapter.notifyDataSetChanged();
     }
 
     private void setRecyclerView(View view) {
+
+        ArrayList<PointsItem> points = PointsItem.getData();
+
         recycler = view.findViewById(R.id.recycler);
-        adapter = new RecyclerAdapter(this.getContext(), PointsItem.getData());
+        adapter = new RecyclerAdapter(this.getContext(), points);
         recycler.setAdapter(adapter);
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this.getContext());
