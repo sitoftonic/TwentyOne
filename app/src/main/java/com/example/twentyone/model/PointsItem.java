@@ -86,6 +86,19 @@ public class PointsItem {
         return pointsList;
     }
 
+    public static ArrayList<PointsItem> getData2() {
+        ArrayList<PointsItem> pointsList = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            PointsItem points = new PointsItem();
+            points.setDate(new Date());
+            points.setNotes("Note " + i);
+            pointsList.add(points);
+        }
+
+        return pointsList;
+    }
+
     @Override
     public String toString() {
         return "PointsItem{" +
