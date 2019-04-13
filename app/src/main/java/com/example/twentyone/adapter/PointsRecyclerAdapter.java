@@ -19,11 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PointsRecyclerAdapter extends RecyclerView.Adapter<PointsRecyclerAdapter.CustomViewHolder> {
 
-    private List<Points> mData;
+    private static List<Points> mData;
     private LayoutInflater mInflater;
 
     public PointsRecyclerAdapter(Context context, List<Points> data) {
-        this.mData = data;
+        mData = data;
         this.mInflater = LayoutInflater.from(context);
     }
 
@@ -37,9 +37,9 @@ public class PointsRecyclerAdapter extends RecyclerView.Adapter<PointsRecyclerAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final CustomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final CustomViewHolder holder, final int position) {
         
-        Points current = mData.get(position);
+        final Points current = mData.get(position);
         holder.setData(current, position);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +48,7 @@ public class PointsRecyclerAdapter extends RecyclerView.Adapter<PointsRecyclerAd
                 Log.i("LISTTT", "viewPressed -> " + ((TextView)holder.itemView.findViewById(R.id.item_subTitle)).getText());
                 Context context = v.getContext();
                 Intent intent = new Intent(context, PointsDetailActivity.class);
-                intent.putExtra("note_id", ((TextView)holder.itemView.findViewById(R.id.item_subTitle)).getText());
+                intent.putExtra("entry_id", position);
                 context.startActivity(intent);
             }
         });
@@ -61,6 +61,7 @@ public class PointsRecyclerAdapter extends RecyclerView.Adapter<PointsRecyclerAd
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
+        TextView item_id;
         TextView title;
         TextView subTitle;
 
@@ -69,29 +70,31 @@ public class PointsRecyclerAdapter extends RecyclerView.Adapter<PointsRecyclerAd
 
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
-
+            item_id = itemView.findViewById(R.id.item_id);
             title = itemView.findViewById(R.id.item_title);
             subTitle = itemView.findViewById(R.id.item_subTitle);
-
         }
 
         public void setData(Points current, int position) {
 
+            this.item_id.setText(String.valueOf(position + 1));
             this.title.setText(current.getDate());
             this.subTitle.setText(current.getNotes());
-
             this.position = position;
             this.current = current;
         }
     }
 
+    public static Points getPoints(int position) {
+        return mData.get(position);
+    }
 
-    public List<Points> getPoints() {
+    public List<Points> getPointsList() {
         return mData;
     }
 
-    public void setPoints(List<Points> data) {
-        this.mData = data;
+    public void setPointsList(List<Points> data) {
+        mData = data;
     }
 
 }
