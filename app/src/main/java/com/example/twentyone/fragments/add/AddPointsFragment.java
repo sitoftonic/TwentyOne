@@ -83,9 +83,9 @@ public class AddPointsFragment extends Fragment {
         drink = view.findViewById(R.id.add_points_drink);
         notes_input = view.findViewById(R.id.add_points_notes_input);
         notes_text = view.findViewById(R.id.add_points_notes_text);
-        user_input = view.findViewById(R.id.add_points_user_input);
-        user_text = view.findViewById(R.id.add_points_user_text);
-        cancel = view.findViewById(R.id.add_points_cancel);
-        save = view.findViewById(R.id.add_points_save);
+        //user_input = view.findViewById(R.id.add_points_user_input);
+        //user_text = view.findViewById(R.id.add_points_user_text);
+        //cancel = view.findViewById(R.id.add_points_cancel);
+        //save = view.findViewById(R.id.add_points_save);
     }
 }
