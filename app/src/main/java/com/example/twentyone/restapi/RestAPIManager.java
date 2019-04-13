@@ -21,10 +21,19 @@ import com.example.twentyone.restapi.callback.WeightAPICallBack;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -451,6 +460,119 @@ public class RestAPIManager {
                     }
                 }
                 return finalPoints;
+            }
+        });
+
+    }
+
+    public synchronized void getTotalPointsWeek(final PointsAPICallBack pointsAPICallBack, final int level, final int total){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        int suma = sumaWeek(pointsArrayList,total);
+                        getTotalPointsWeek(pointsAPICallBack,level+1,suma);
+                    }
+                    else{
+                        pointsAPICallBack.onFinishedGraphCallback(total);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private int sumaWeek(ArrayList<Points> points, int suma) {
+                for (Points p : points) {
+                    try {
+                        if (isDateInCurrentWeek(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()))) {
+                            suma++;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return suma;
+            }
+
+            private boolean isDateInCurrentWeek(Date date) {
+                Calendar currentCalendar = Calendar.getInstance();
+                int week = currentCalendar.get(Calendar.WEEK_OF_YEAR);
+                int year = currentCalendar.get(Calendar.YEAR);
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(date);
+                int targetWeek = targetCalendar.get(Calendar.WEEK_OF_YEAR);
+                int targetYear = targetCalendar.get(Calendar.YEAR);
+                return week == targetWeek && year == targetYear;
+            }
+        });
+
+    }
+
+
+    public synchronized void getTotalPointsMonth(final PointsAPICallBack pointsAPICallBack, final int level, final int total){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        int suma = sumaMonth(pointsArrayList,total);
+                        getTotalPointsMonth(pointsAPICallBack,level+1,suma);
+                    }
+                    else{
+                        pointsAPICallBack.onFinishedGraphCallback(total);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private int sumaMonth(ArrayList<Points> points, int suma) {
+                for (Points p : points) {
+                    try {
+                        if (isDateInCurrentMonth(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()))) {
+                            suma++;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return suma;
+            }
+
+            private boolean isDateInCurrentMonth(Date date) {
+                Calendar currentCalendar = Calendar.getInstance();
+                int month = currentCalendar.get(Calendar.MONTH);
+                int year = currentCalendar.get(Calendar.YEAR);
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(date);
+                int targetMonth = targetCalendar.get(Calendar.MONTH);
+                int targetYear = targetCalendar.get(Calendar.YEAR);
+                return month == targetMonth && year == targetYear;
             }
         });
 

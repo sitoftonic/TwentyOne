@@ -138,6 +138,11 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     }
 
     @Override
+    public void onFinishedGraphCallback(int value) {
+
+    }
+
+    @Override
     public void onFailure(Throwable t) {
         Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_error, Snackbar.LENGTH_SHORT).show();
     }
