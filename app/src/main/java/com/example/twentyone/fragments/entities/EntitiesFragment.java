@@ -36,6 +36,7 @@ public class EntitiesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
     }
 
     @Nullable
@@ -46,7 +47,7 @@ public class EntitiesFragment extends Fragment {
 
         mPagerAdapter = new FragmentPagerAdapter(getChildFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    new EntitiesPointsFragment(),
+                    EntitiesPointsFragment.getInstance(),
                     new EntitiesBloodPressureFragment(),
                     new EntitiesWeightFragment(),
                     new EntitiesPreferencesFragment()
