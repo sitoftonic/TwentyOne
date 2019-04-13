@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.example.twentyone.R;
+import com.example.twentyone.fragments.entities.EntitiesPointsFragment;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.restapi.RestAPIManager;
@@ -105,16 +106,12 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
         Log.i("ADD-POINTS", "Date: " + date + " Exercise: " + s_exercise + " Eat: " + s_eat + " Drink: " + s_drink + " Notes: " + notes);
 
         RestAPIManager.getInstance().postPoints(new Points(date, s_exercise, s_eat, s_drink, notes),this);
-
-        //Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
-
     }
 
     @Override
     public void onPostPoints(Points points) {
         Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
-        //RestAPIManager.getInstance().getAllPointsByUser(this,0);
-       // RestAPIManager.getInstance().getAllPointsByUser(this,0,new ArrayList<Points>());
+        EntitiesPointsFragment.updatePoints();
     }
 
     @Override
