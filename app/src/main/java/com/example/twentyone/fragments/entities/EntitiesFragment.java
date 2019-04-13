@@ -1,4 +1,4 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.entities;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

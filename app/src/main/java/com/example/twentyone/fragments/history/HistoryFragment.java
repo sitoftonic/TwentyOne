@@ -1,4 +1,4 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.history;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,14 +10,10 @@ import android.widget.TextView;
 
 import com.example.twentyone.R;
 import com.example.twentyone.dialogs.AddPointsDialog;
-import com.example.twentyone.dialogs.ResetPassDialog;
-import com.example.twentyone.model.Validator;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;

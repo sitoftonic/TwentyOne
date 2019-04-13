@@ -61,6 +61,7 @@
             android:layout_marginBottom="16dp">
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPoints"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -86,7 +87,43 @@
                         android:layout_height="wrap_content"
                         app:chipIcon="@drawable/ic_round_error_outline_24px"
                         android:text="@string/home_points_empty"
-                        android:layout_margin="8dp"/>
+                        android:layout_margin="8dp"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <RadioGroup
+                            android:id="@+id/radioGroupPoints"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:checkedButton="@id/radioButtonWeekly">
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radioButtonWeekly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/str_weekly"
+                                android:paddingEnd="12dp"/>
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radioButtonMonthly"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/str_monthly"/>
+
+
+                        </RadioGroup>
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/chartPoints"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/add_points_button"
@@ -103,6 +140,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardBlood"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -145,6 +183,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardWeight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

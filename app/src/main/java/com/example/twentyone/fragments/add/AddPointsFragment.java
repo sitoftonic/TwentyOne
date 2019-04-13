@@ -1,4 +1,4 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.add;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;

@@ -1,16 +1,18 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.home;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.example.twentyone.R;
 import com.example.twentyone.dialogs.AddBloodDialog;
 import com.example.twentyone.dialogs.AddPointsDialog;
 import com.example.twentyone.dialogs.AddWeightDialog;
+import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.material.button.MaterialButton;
 
 import androidx.annotation.NonNull;
@@ -26,6 +28,10 @@ public class HomeFragment extends Fragment {
     private MaterialButton add_points;
     private MaterialButton add_blood;
     private MaterialButton add_weight;
+
+    private LineChart chartPoints;
+    private RadioGroup radioGroup;
+    private RadioButton radioButtonChecked;
 
     private static final HomeFragment ourInstance = new HomeFragment();
 
@@ -57,6 +63,13 @@ public class HomeFragment extends Fragment {
 
         user_text = view.findViewById(R.id.user_text);
 
+        radioGroup = view.findViewById(R.id.radioGroupPoints);
+        radioButtonChecked = view.findViewById(radioGroup.getCheckedRadioButtonId());
+
+        initChartPoints(view);
+
+        radioGroup.setOnCheckedChangeListener(new PointsRadioButtonsListener(chartPoints));
+
         String user = getArguments().getString("user");
 
         if (user != null) {
@@ -87,5 +100,11 @@ public class HomeFragment extends Fragment {
                 new AddWeightDialog().show(getChildFragmentManager(), "weight_dialog");
             }
         });
+    }
+
+    private void initChartPoints(View view) {
+        chartPoints = view.findViewById(R.id.chartPoints);
+
+
     }
 }

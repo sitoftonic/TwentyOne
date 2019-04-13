@@ -193,4 +193,9 @@
         Massa dui fames morbi metus consequat auctor etiam cras hendrerit sollicitudin, conubia vulputate montes leo primis ante tempor vehicula ac, sagittis ad id taciti vel et sociis faucibus aenean. Habitasse vestibulum netus vehicula sociosqu nulla massa suscipit condimentum, venenatis mollis imperdiet nascetur eget est conubia, dapibus placerat purus maecenas molestie nullam inceptos. Facilisi ad elementum tempus eget id nisi tellus habitant, ullamcorper semper pellentesque conubia lobortis curabitur suspendisse, turpis luctus cubilia leo penatibus libero sem.
     </string>
 
+    <!-- Strings de los charts -->
+    <!-- Puntos -->
+    <string name="str_weekly">Weekly</string>
+    <string name="str_monthly">Monthly</string>
+
 </resources>

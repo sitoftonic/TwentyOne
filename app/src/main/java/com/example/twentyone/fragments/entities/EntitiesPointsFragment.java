@@ -1,4 +1,4 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.entities;
 
 import android.content.Context;
 import android.os.Bundle;
