@@ -32,6 +32,18 @@
     <string name="dialog_reset_positive">Reset</string>
     <string name="dialog_reset_negative">Cancel</string>
 
+    <!--Delete Points Dialog-->
+    <string name="dialog_delete_points_title">Delete Points Entry</string>
+    <string name="dialog_delete_points_msg">Are you sure you want to delete this entry?</string>
+    <string name="dialog_delete_points_negative">Cancel</string>
+    <string name="dialog_delete_points_positive">Delete</string>
+
+    <!--Update Points Dialog-->
+    <string name="dialog_update_points_title">Update Points Entry</string>
+    <string name="dialog_update_points_msg">Are you sure you want to update this entry?</string>
+    <string name="dialog_update_points_negative">Cancel</string>
+    <string name="dialog_update_points_positive">Update</string>
+
     <!--Register Activity-->
     <string name="register_title">Register</string>
     <string name="register_username">Username</string>
@@ -115,8 +127,10 @@
     <string name="add_points_drink">Did you drink responsibly?</string>
     <string name="add_points_notes">Notes</string>
     <string name="add_points_user">User</string>
+    <string name="add_points_edit">Edit</string>
     <string name="add_points_save">Save</string>
     <string name="add_points_cancel">Cancel</string>
+    <string name="add_points_delete">Delete</string>
     <string name="add_points_toast_success">Points Added Successfully</string>
     <string name="add_points_toast_error">Error Adding Points</string>
 
