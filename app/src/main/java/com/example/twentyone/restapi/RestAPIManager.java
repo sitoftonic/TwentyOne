@@ -44,9 +44,6 @@ public class RestAPIManager {
     private static final String ERROR_RESET_KEY = "No user was found for this reset key";
     private static final String ERROR_KEY_EMAIL = "emailexists";
 
-    private List<Object> genList,getGenListByUser;
-    private ArrayList<Points> pointsList = new ArrayList<>();
-
     private static RestAPIManager ourInstance;
     private Retrofit retrofit;
     private RestAPIService restApiService;
@@ -388,7 +385,7 @@ public class RestAPIManager {
     }
 
 
-    public synchronized void getAllPointsByUser(final PointsAPICallBack pointsAPICallBack, final int level){
+    public synchronized void getAllPointsByUser(final PointsAPICallBack pointsAPICallBack, final int level, final ArrayList<Points> pointsList){
         Log.d("LRM", "all points GET request");
 
         Map<String,String> data = new HashMap<>();
@@ -400,7 +397,7 @@ public class RestAPIManager {
                 if (response.isSuccessful()) {
                     if(response.body().length > 0){
                         pointsList.addAll(Arrays.asList(response.body()));
-                        getAllPointsByUser(pointsAPICallBack,level+1);
+                        getAllPointsByUser(pointsAPICallBack,level+1,pointsList);
                     }
                     else{
                         pointsAPICallBack.onFinishedCallback(pointsList);
@@ -418,7 +415,7 @@ public class RestAPIManager {
 
     }
 
-    public synchronized void getAllPointsByUserSearch(final PointsAPICallBack pointsAPICallBack, final int level, final String search){
+    public synchronized void getAllPointsByUserSearch(final PointsAPICallBack pointsAPICallBack, final int level, final String search, final ArrayList<Points> pointsList){
         Log.d("LRM", "all points search GET request");
 
         Map<String,String> data = new HashMap<>();
@@ -430,7 +427,7 @@ public class RestAPIManager {
                 if (response.isSuccessful()) {
                     if(response.body().length > 0){
                         pointsList.addAll(Arrays.asList(response.body()));
-                        getAllPointsByUserSearch(pointsAPICallBack,level+1,search);
+                        getAllPointsByUserSearch(pointsAPICallBack,level+1,search,pointsList);
                     }
                     else{
                         ArrayList<Points> finalPoints = getPointsBySearch(pointsList);

@@ -113,6 +113,7 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     @Override
     public void onPostPoints(Points points) {
         Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
+        //RestAPIManager.getInstance().getAllPointsByUser(this,0);
     }
 
     @Override

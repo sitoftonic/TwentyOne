@@ -60,7 +60,7 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
         view = inflater.inflate(R.layout.fragment_entities_points, container, false);
 
         //setRecyclerView(view);
-        RestAPIManager.getInstance().getAllPointsByUser(this,0);
+        RestAPIManager.getInstance().getAllPointsByUser(this,0,new ArrayList<Points>());
 
         search_layout = view.findViewById(R.id.points_search_text_input);
         search_text = view.findViewById(R.id.points_search_edit_text);
