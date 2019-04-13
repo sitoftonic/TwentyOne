@@ -8,11 +8,6 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_points_title"
-        android:textSize="30sp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/add_points_date_input"
@@ -81,24 +76,6 @@
             android:lines="3" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_points_user_input"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:defaultFocusHighlightEnabled="true"
-        android:hint="@string/add_points_user"
-        app:boxStrokeColor="@color/colorAccent"
-        app:boxStrokeWidth="2dp"
-        app:hintEnabled="true">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/add_points_user_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <GridLayout
         android:id="@+id/add_points_buttons"
@@ -110,24 +87,21 @@
         android:rowCount="1">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_points_cancel"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:id="@+id/add_points_button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_margin="16dp"
-            android:text="@string/add_points_cancel" />
+            android:layout_margin="16dp" />
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_points_save"
+            android:id="@+id/add_points_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
-            android:layout_margin="16dp"
-            android:text="@string/add_points_save" />
+            android:layout_margin="16dp" />
 
     </GridLayout>
 
