@@ -136,7 +136,7 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
 
 
 
-        adapter.setPoints(PointsItem.getData2());
+        RestAPIManager.getInstance().getAllPointsByUserSearch(this,0,search,new ArrayList<Points>());
         adapter.notifyDataSetChanged();
     }
 
