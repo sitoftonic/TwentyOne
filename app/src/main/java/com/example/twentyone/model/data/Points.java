@@ -32,6 +32,10 @@ public class Points {
     @Expose
     private User user;
 
+    public Points() {
+
+    }
+
     public Points(String date, Integer exercise, Integer meals, Integer alcohol, String notes) {
         this.date = changeDateFormat(date);
         this.exercise = exercise;
