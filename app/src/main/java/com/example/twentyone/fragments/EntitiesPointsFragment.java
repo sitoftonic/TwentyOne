@@ -16,11 +16,18 @@ import com.example.twentyone.R;
 import com.example.twentyone.adapter.RecyclerAdapter;
 import com.example.twentyone.dialogs.AddPointsDialog;
 import com.example.twentyone.model.PointsItem;
+import com.example.twentyone.model.data.Points;
+import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.restapi.BloodWheightPointApiSons.PointManager;
+import com.example.twentyone.restapi.RestAPIManager;
+import com.example.twentyone.restapi.callback.BloodWeightPointsGPSDAPICallBack;
+import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +35,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class EntitiesPointsFragment extends Fragment {
+public class EntitiesPointsFragment extends Fragment implements PointsAPICallBack {
 
     private TextInputLayout search_layout;
     private TextInputEditText search_text;
@@ -37,6 +44,8 @@ public class EntitiesPointsFragment extends Fragment {
 
     private RecyclerView recycler;
     private RecyclerAdapter adapter;
+
+    private View view;
 
 
     @Override
@@ -48,9 +57,10 @@ public class EntitiesPointsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_entities_points, container, false);
+        view = inflater.inflate(R.layout.fragment_entities_points, container, false);
 
-        setRecyclerView(view);
+        //setRecyclerView(view);
+        RestAPIManager.getInstance().getAllPointsByUser(this,0);
 
         search_layout = view.findViewById(R.id.points_search_text_input);
         search_text = view.findViewById(R.id.points_search_edit_text);
@@ -130,10 +140,7 @@ public class EntitiesPointsFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void setRecyclerView(View view) {
-
-        ArrayList<PointsItem> points = PointsItem.getData();
-
+    private void setRecyclerView(View view, ArrayList<PointsItem> points) {
         recycler = view.findViewById(R.id.recycler);
         adapter = new RecyclerAdapter(this.getContext(), points);
         recycler.setAdapter(adapter);
@@ -146,5 +153,43 @@ public class EntitiesPointsFragment extends Fragment {
 
     }
 
+    private ArrayList<PointsItem> setUserPoints(ArrayList<Points> points) {
+        ArrayList<PointsItem> pointsItems = new ArrayList<>();
+        for (Object o : points) {
+            Points p = (Points) o;
+            pointsItems.add(new PointsItem(p.getDate(),p.getExercise(),p.getMeals(),p.getAlcohol(),p.getNotes(),p.getUser().getEmail()));
+        }
+        return pointsItems;
+    }
 
+    @Override
+    public void onFinishedCallback(ArrayList<Points> points) {
+        ArrayList<PointsItem> pointsItems = setUserPoints(points);
+        setRecyclerView(view,pointsItems);
+    }
+
+    @Override
+    public void onPostPoints(Points points) {
+
+    }
+
+    @Override
+    public void onGetPoints(Points points) {
+
+    }
+
+    @Override
+    public void onGetPointsWeek(PointsWeek pointsWeek) {
+
+    }
+
+    @Override
+    public void onBadRequest() {
+
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+
+    }
 }

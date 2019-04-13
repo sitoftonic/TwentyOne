@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -130,7 +131,7 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     }
 
     @Override
-    public void onFinishedCallback(List<Points> pointsList) {
+    public void onFinishedCallback(ArrayList<Points> pointsList) {
 
     }
 

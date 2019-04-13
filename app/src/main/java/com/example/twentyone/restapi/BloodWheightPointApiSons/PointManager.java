@@ -6,6 +6,7 @@ import com.example.twentyone.model.data.BloodPressure;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.BloodWeightPointDataApiManager;
+import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.RestAPIService;
 import com.example.twentyone.restapi.callback.BloodWeightPointsGPSDAPICallBack;
 
@@ -22,7 +23,7 @@ public class PointManager extends BloodWeightPointDataApiManager {
         super(userToken, restApiService);
     }
 
-
+    /*
     protected synchronized void getAll(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level){
         Log.d("LRM", "all points GET request");
 
@@ -33,12 +34,13 @@ public class PointManager extends BloodWeightPointDataApiManager {
             @Override
             public void onResponse(Call<Points[]> call, Response<Points[]> response) {
                 if (response.isSuccessful()) {
-                    if(response.body().length>0){
+                    if(response.body().length > 0){
                         genList.addAll(Arrays.asList(response.body()));
                         getAll(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(genList);
+                        Points[] points = new Points[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(points);
                     }
                 } else {
                     bwpgpsdapiCallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
@@ -74,14 +76,16 @@ public class PointManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            Points[] points = new Points[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(points);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        Points[] points = new Points[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(points);
                     }
 
                 } else {
@@ -117,14 +121,16 @@ public class PointManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            Points[] points = new Points[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(points);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        Points[] points = new Points[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(points);
                     }
 
                 } else {
@@ -138,4 +144,5 @@ public class PointManager extends BloodWeightPointDataApiManager {
             }
         });
     }
+    */
 }

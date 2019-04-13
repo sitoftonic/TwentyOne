@@ -96,7 +96,7 @@ public class Points {
         this.user = user;
     }
 
-    public String changeDateFormat(String oldDateString) {
+    private String changeDateFormat(String oldDateString) {
         final String OLD_FORMAT = "dd/MM/yyyy";
         final String NEW_FORMAT = "yyyy-MM-dd";
 
@@ -122,5 +122,18 @@ public class Points {
                 ", notes=" + notes +
                 ", user=" + user +
                 '}';
+    }
+
+    public boolean hasWord(String search) {
+        if (this.date.contains(search)) {
+            return true;
+        }
+        else if (String.valueOf(exercise).contains(search)) {
+            return true;
+        } else if (String.valueOf(meals).contains(search)) {
+            return true;
+        } else if (String.valueOf(alcohol).contains(search)) {
+            return true;
+        } else return notes.contains(search);
     }
 }

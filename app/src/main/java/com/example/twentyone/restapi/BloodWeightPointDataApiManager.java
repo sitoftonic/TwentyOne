@@ -8,14 +8,17 @@ import java.util.List;
 
 public class BloodWeightPointDataApiManager {
 
+
     protected UserToken userToken;
     protected RestAPIService restApiService;
     protected List<Object> genList,getGenListByUser;
+
 
     public BloodWeightPointDataApiManager(UserToken userToken, RestAPIService restApiService){
         this.userToken = userToken;
         this.restApiService = restApiService;
     }
+    /*
 
     public synchronized void getAll(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack){
         genList = new LinkedList<>();
@@ -39,4 +42,5 @@ public class BloodWeightPointDataApiManager {
     protected synchronized void getAllByUser(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level,final String search){
 
     }
+    */
 }
