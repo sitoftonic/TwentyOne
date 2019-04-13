@@ -13,29 +13,34 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.example.twentyone.R;
-import com.example.twentyone.adapter.RecyclerAdapter;
+import com.example.twentyone.adapter.PointsRecyclerAdapter;
 import com.example.twentyone.dialogs.AddPointsDialog;
-import com.example.twentyone.model.PointsItem;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
-import com.example.twentyone.restapi.BloodWheightPointApiSons.PointManager;
 import com.example.twentyone.restapi.RestAPIManager;
-import com.example.twentyone.restapi.callback.BloodWeightPointsGPSDAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EntitiesPointsFragment extends Fragment implements PointsAPICallBack {
+
+    private static final EntitiesPointsFragment ourInstance = new EntitiesPointsFragment();
+
+    public static EntitiesPointsFragment getInstance() {
+        return ourInstance;
+    }
+
+    public EntitiesPointsFragment() { }
 
     private TextInputLayout search_layout;
     private TextInputEditText search_text;
@@ -43,24 +48,38 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
     private MaterialButton add_points;
 
     private RecyclerView recycler;
-    private RecyclerAdapter adapter;
+    public static PointsRecyclerAdapter adapter;
 
     private View view;
-
+    private Bundle bundle = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+
+        Log.i("ENTITIES-POINTS", "onCreate");
+
+        view = getLayoutInflater().inflate(R.layout.fragment_entities_points, null);
+        initView();
+        setRecyclerView(view, new ArrayList<Points>());
+        RestAPIManager.getInstance().getAllPointsByUser(this,0,new ArrayList<Points>());
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_entities_points, container, false);
+        //view = inflater.inflate(R.layout.fragment_entities_points, container, false);
+        //initView();
+        //setRecyclerView(view, new ArrayList<Points>());
+        //RestAPIManager.getInstance().getAllPointsByUser(this,0,new ArrayList<Points>());
 
-        //setRecyclerView(view);
-        RestAPIManager.getInstance().getAllPointsByUser(this,0,new ArrayList<Points>());
+        Log.i("ENTITIES-POINTS", "onCreateView");
+        return view;
+    }
+
+    private void initView() {
 
         search_layout = view.findViewById(R.id.points_search_text_input);
         search_text = view.findViewById(R.id.points_search_edit_text);
@@ -71,7 +90,6 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
                     performSearch();
                     return true;
                 }
-
                 return false;
             }
         });
@@ -119,7 +137,21 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
             }
         });
 
-        return view;
+        recycler = view.findViewById(R.id.recycler);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("ENTITIES-POINTS", "onPause");
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i("ENTITIES-POINTS", "onSave");
+
     }
 
     private void performSearch() {
@@ -128,21 +160,19 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
         InputMethodManager in = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(search_text.getWindowToken(), 0);
 
-
         adapter.getPoints().clear();
 
-        //TODO SEARCH
         String search = search_text.getText().toString();
 
-
-
         RestAPIManager.getInstance().getAllPointsByUserSearch(this,0,search,new ArrayList<Points>());
+
         adapter.notifyDataSetChanged();
     }
 
-    private void setRecyclerView(View view, ArrayList<PointsItem> points) {
-        recycler = view.findViewById(R.id.recycler);
-        adapter = new RecyclerAdapter(this.getContext(), points);
+    private void setRecyclerView(View view, ArrayList<Points> points) {
+        Log.i("ENTITIES-POINTS", "RECYCLE");
+
+        adapter = new PointsRecyclerAdapter(this.getContext(), points);
         recycler.setAdapter(adapter);
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this.getContext());
@@ -150,22 +180,60 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
         recycler.setLayoutManager(mLinearLayoutManager);
 
         //recycler.setItemAnimator(new DefaultItemAnimator());
-
     }
 
-    private ArrayList<PointsItem> setUserPoints(ArrayList<Points> points) {
-        ArrayList<PointsItem> pointsItems = new ArrayList<>();
-        for (Object o : points) {
-            Points p = (Points) o;
-            pointsItems.add(new PointsItem(p.getDate(),p.getExercise(),p.getMeals(),p.getAlcohol(),p.getNotes(),p.getUser().getEmail()));
+    public static void updateAdapter(ArrayList<Points> points) {
+        adapter.getPoints().clear();
+        adapter.setPoints(points);
+        adapter.notifyDataSetChanged();
+    }
+
+    public static void updatePoints() {
+
+        if (adapter != null) {
+
+            RestAPIManager.getInstance().getAllPointsByUser(new PointsAPICallBack() {
+                @Override
+                public void onPostPoints(Points points) {
+
+                }
+
+                @Override
+                public void onGetPoints(Points points) {
+
+                }
+
+                @Override
+                public void onGetPointsWeek(PointsWeek pointsWeek) {
+
+                }
+
+                @Override
+                public void onBadRequest() {
+
+                }
+
+                @Override
+                public void onFinishedCallback(ArrayList<Points> pointsList) {
+                    updateAdapter(pointsList);
+                }
+
+                @Override
+                public void onFinishedGraphCallback(int value) {
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
+                }
+            }, 0, new ArrayList<Points>());
         }
-        return pointsItems;
+
     }
 
     @Override
     public void onFinishedCallback(ArrayList<Points> points) {
-        ArrayList<PointsItem> pointsItems = setUserPoints(points);
-        setRecyclerView(view,pointsItems);
+        updateAdapter(points);
     }
 
     @Override
