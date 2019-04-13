@@ -10,19 +10,19 @@ import android.widget.TextView;
 
 import com.example.twentyone.R;
 import com.example.twentyone.activities.PointsDetailActivity;
-import com.example.twentyone.model.PointsItem;
+import com.example.twentyone.model.data.Points;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.CustomViewHolder> {
+public class PointsRecyclerAdapter extends RecyclerView.Adapter<PointsRecyclerAdapter.CustomViewHolder> {
 
-    private List<PointsItem> mData;
+    private List<Points> mData;
     private LayoutInflater mInflater;
 
-    public RecyclerAdapter(Context context, List<PointsItem> data) {
+    public PointsRecyclerAdapter(Context context, List<Points> data) {
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
     }
@@ -39,7 +39,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
     @Override
     public void onBindViewHolder(@NonNull final CustomViewHolder holder, int position) {
         
-        PointsItem current = mData.get(position);
+        Points current = mData.get(position);
         holder.setData(current, position);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +65,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
         TextView subTitle;
 
         int position;
-        PointsItem current;
+        Points current;
 
         public CustomViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -75,9 +75,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
 
         }
 
-        public void setData(PointsItem current, int position) {
+        public void setData(Points current, int position) {
 
-            this.title.setText(current.getDate().toString());
+            this.title.setText(current.getDate());
             this.subTitle.setText(current.getNotes());
 
             this.position = position;
@@ -86,11 +86,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Custom
     }
 
 
-    public List<PointsItem> getPoints() {
+    public List<Points> getPoints() {
         return mData;
     }
 
-    public void setPoints(List<PointsItem> data) {
+    public void setPoints(List<Points> data) {
         this.mData = data;
     }
 
