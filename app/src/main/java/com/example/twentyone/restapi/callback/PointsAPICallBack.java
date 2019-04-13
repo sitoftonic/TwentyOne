@@ -12,4 +12,5 @@ public interface PointsAPICallBack extends RestAPICallBack{
     void onGetPointsWeek(PointsWeek pointsWeek);
     void onBadRequest();
     void onFinishedCallback(ArrayList<Points> pointsList);
+    void onFinishedGraphCallback(int value);
 }

@@ -169,6 +169,11 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
     }
 
     @Override
+    public void onFinishedGraphCallback(int value) {
+
+    }
+
+    @Override
     public void onPostPoints(Points points) {
 
     }
