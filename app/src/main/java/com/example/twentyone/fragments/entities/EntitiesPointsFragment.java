@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -160,7 +159,7 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
         InputMethodManager in = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         in.hideSoftInputFromWindow(search_text.getWindowToken(), 0);
 
-        adapter.getPoints().clear();
+        adapter.getPointsList().clear();
 
         String search = search_text.getText().toString();
 
@@ -183,10 +182,27 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
     }
 
     public static void updateAdapter(ArrayList<Points> points) {
-        adapter.getPoints().clear();
-        adapter.setPoints(points);
+        adapter.getPointsList().clear();
+        adapter.setPointsList(points);
         adapter.notifyDataSetChanged();
     }
+
+    public static void updateEntry(int index, Points points) {
+        adapter.getPointsList().set(index, points);
+        adapter.notifyItemChanged(index);
+
+        //TODO UPDATE ENTRY IN BACKEND
+
+    }
+
+    public static void deleteEntry(int index) {
+        adapter.getPointsList().remove(index);
+        adapter.notifyItemChanged(index);
+
+        //TODO DELETE ENTRY IN BACKEND
+
+    }
+
 
     public static void updatePoints() {
 
