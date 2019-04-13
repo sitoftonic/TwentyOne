@@ -7,7 +7,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/activity_detail">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
@@ -32,27 +33,12 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/demo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    />
-                <TextView
-                    android:id="@+id/note"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ipsum3" />
-
-            </FrameLayout>
+            <include android:id="@+id/fragment_add" layout="@layout/fragment_add_points" />
 
 
         </androidx.core.widget.NestedScrollView>
