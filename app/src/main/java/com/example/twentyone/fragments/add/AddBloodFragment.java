@@ -1,4 +1,4 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.add;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,13 +14,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class AddWeightFragment extends Fragment {
+public class AddBloodFragment extends Fragment {
 
     private TextInputLayout date_input;
     private TextInputEditText date_text;
 
-    private TextInputLayout weight_input;
-    private TextInputEditText weight_text;
+    private TextInputLayout systolic_input;
+    private TextInputEditText systolic_text;
+
+    private TextInputLayout diastolic_input;
+    private TextInputEditText diastolic_text;
 
     private TextInputLayout user_input;
     private TextInputEditText user_text;
@@ -37,7 +40,7 @@ public class AddWeightFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_add_weight, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_blood, container, false);
 
         initView(view);
 
@@ -46,17 +49,20 @@ public class AddWeightFragment extends Fragment {
 
     private void initView(View view) {
 
-        date_input = view.findViewById(R.id.add_weight_date_input);
-        date_text = view.findViewById(R.id.add_weight_date_text);
+        date_input = view.findViewById(R.id.add_blood_date_input);
+        date_text = view.findViewById(R.id.add_blood_date_text);
 
-        weight_input = view.findViewById(R.id.add_weight_weight_input);
-        weight_text = view.findViewById(R.id.add_weight_weight_text);
+        systolic_input = view.findViewById(R.id.add_blood_systolic_input);
+        systolic_text = view.findViewById(R.id.add_blood_systolic_text);
 
-        user_input = view.findViewById(R.id.add_weight_user_input);
-        user_text = view.findViewById(R.id.add_weight_user_text);
+        diastolic_input = view.findViewById(R.id.add_blood_diastolic_input);
+        diastolic_text = view.findViewById(R.id.add_blood_diastolic_text);
 
-        cancel = view.findViewById(R.id.add_weight_cancel);
-        save = view.findViewById(R.id.add_weight_save);
+        user_input = view.findViewById(R.id.add_blood_user_input);
+        user_text = view.findViewById(R.id.add_blood_user_text);
+
+        cancel = view.findViewById(R.id.add_blood_cancel);
+        save = view.findViewById(R.id.add_blood_save);
 
     }
 }

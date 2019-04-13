@@ -23,6 +23,7 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
         super(userToken, restApiService);
     }
 
+    /*
     protected synchronized void getAll(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level){
         Log.d("LRM", "all points GET request");
 
@@ -38,7 +39,8 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
                         getAll(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(genList);
+                        Preferences[] preferences = new Preferences[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(preferences);
                     }
                 } else {
                     bwpgpsdapiCallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
@@ -74,14 +76,16 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            Preferences[] preferences = new Preferences[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(preferences);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        Preferences[] preferences = new Preferences[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(preferences);
                     }
 
                 } else {
@@ -118,14 +122,16 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            Preferences[] preferences = new Preferences[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(preferences);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        Preferences[] preferences = new Preferences[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(preferences);
                     }
 
                 } else {
@@ -139,4 +145,5 @@ public class PreferencesManager extends BloodWeightPointDataApiManager {
             }
         });
     }
+    */
 }

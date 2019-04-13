@@ -1,5 +1,7 @@
 package com.example.twentyone.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -12,8 +14,31 @@ public class PointsItem {
     private String notes;
     private String user;
 
+
     public PointsItem() {
 
+    }
+
+    public PointsItem(String date, Integer exercise, Integer eat, Integer drink, String notes, String user) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date fecha = null;
+        try {
+            fecha = format.parse (date);
+            this.date = fecha;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (fecha == null) {
+            this.date = new Date();
+        }
+        this.exercise = false;
+        if (exercise == 1) this.exercise = true;
+        this.eat = false;
+        if (eat == 1) this.eat = true;
+        this.drink = false;
+        if (drink == 1) this.drink = true;
+        this.notes = notes;
+        this.user = user;
     }
 
     public PointsItem(Date date, boolean exercise, boolean eat, boolean drink, String notes, String user) {

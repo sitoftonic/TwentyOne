@@ -1,4 +1,4 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import com.example.twentyone.R;
-import com.example.twentyone.model.Settings;
 
 import androidx.annotation.Nullable;
 

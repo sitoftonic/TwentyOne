@@ -1,4 +1,4 @@
-package com.example.twentyone.fragments;
+package com.example.twentyone.fragments.account;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,14 +9,9 @@ import android.view.ViewGroup;
 
 import com.example.twentyone.R;
 import com.example.twentyone.activities.LaunchActivity;
-import com.example.twentyone.model.data.User;
-import com.example.twentyone.model.data.UserData;
-import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

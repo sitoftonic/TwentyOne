@@ -13,6 +13,7 @@ import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.model.data.Weight;
 import com.example.twentyone.restapi.callback.AccountAPICallBack;
 import com.example.twentyone.restapi.callback.BloodAPICallBack;
+import com.example.twentyone.restapi.callback.BloodWeightPointsGPSDAPICallBack;
 import com.example.twentyone.restapi.callback.LoginAPICallBack;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.example.twentyone.restapi.callback.PreferencesAPICallBack;
@@ -20,6 +21,20 @@ import com.example.twentyone.restapi.callback.WeightAPICallBack;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 
 import retrofit2.Call;
@@ -37,7 +52,6 @@ public class RestAPIManager {
     private static final String ERROR_EMAIL_NOT_FOUND = "Email address not registered";
     private static final String ERROR_RESET_KEY = "No user was found for this reset key";
     private static final String ERROR_KEY_EMAIL = "emailexists";
-
 
     private static RestAPIManager ourInstance;
     private Retrofit retrofit;
@@ -61,7 +75,7 @@ public class RestAPIManager {
 
     }
 
-    public synchronized void getUserToken(String username, String password, final LoginAPICallBack restAPICallBack) {
+    public synchronized void getUserToken(String username, String password, final LoginAPICallBack loginAPICallBack) {
         Log.d("LOLO", "GET USER TOKEN");
         UserData userData = new UserData(username, password);
         Call<UserToken> call = restApiService.requestToken(userData);
@@ -72,15 +86,15 @@ public class RestAPIManager {
 
                 if (response.isSuccessful()) {
                     userToken = response.body();
-                    restAPICallBack.onLoginSuccess(userToken);
+                    loginAPICallBack.onLoginSuccess(userToken);
                 } else {
-                    restAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    loginAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
             }
 
             @Override
             public void onFailure(Call<UserToken> call, Throwable t) {
-                restAPICallBack.onFailure(t);
+                loginAPICallBack.onFailure(t);
             }
         });
     }
@@ -380,5 +394,188 @@ public class RestAPIManager {
     }
 
 
+    public synchronized void getAllPointsByUser(final PointsAPICallBack pointsAPICallBack, final int level, final ArrayList<Points> pointsList){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        pointsList.addAll(Arrays.asList(response.body()));
+                        getAllPointsByUser(pointsAPICallBack,level+1,pointsList);
+                    }
+                    else{
+                        pointsAPICallBack.onFinishedCallback(pointsList);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
+    public synchronized void getAllPointsByUserSearch(final PointsAPICallBack pointsAPICallBack, final int level, final String search, final ArrayList<Points> pointsList){
+        Log.d("LRM", "all points search GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        pointsList.addAll(Arrays.asList(response.body()));
+                        getAllPointsByUserSearch(pointsAPICallBack,level+1,search,pointsList);
+                    }
+                    else{
+                        ArrayList<Points> finalPoints = getPointsBySearch(pointsList);
+                        pointsAPICallBack.onFinishedCallback(finalPoints);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private ArrayList<Points> getPointsBySearch(ArrayList<Points> points) {
+                ArrayList<Points> finalPoints = new ArrayList<>();
+                for (Points p : points) {
+                    if (p.hasWord(search)) {
+                        finalPoints.add(p);
+                    }
+                }
+                return finalPoints;
+            }
+        });
+
+    }
+
+    public synchronized void getTotalPointsWeek(final PointsAPICallBack pointsAPICallBack, final int level, final int total){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        int suma = sumaWeek(pointsArrayList,total);
+                        getTotalPointsWeek(pointsAPICallBack,level+1,suma);
+                    }
+                    else{
+                        pointsAPICallBack.onFinishedGraphCallback(total);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private int sumaWeek(ArrayList<Points> points, int suma) {
+                for (Points p : points) {
+                    try {
+                        if (isDateInCurrentWeek(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()))) {
+                            suma++;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return suma;
+            }
+
+            private boolean isDateInCurrentWeek(Date date) {
+                Calendar currentCalendar = Calendar.getInstance();
+                int week = currentCalendar.get(Calendar.WEEK_OF_YEAR);
+                int year = currentCalendar.get(Calendar.YEAR);
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(date);
+                int targetWeek = targetCalendar.get(Calendar.WEEK_OF_YEAR);
+                int targetYear = targetCalendar.get(Calendar.YEAR);
+                return week == targetWeek && year == targetYear;
+            }
+        });
+
+    }
+
+
+    public synchronized void getTotalPointsMonth(final PointsAPICallBack pointsAPICallBack, final int level, final int total){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        int suma = sumaMonth(pointsArrayList,total);
+                        getTotalPointsMonth(pointsAPICallBack,level+1,suma);
+                    }
+                    else{
+                        pointsAPICallBack.onFinishedGraphCallback(total);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private int sumaMonth(ArrayList<Points> points, int suma) {
+                for (Points p : points) {
+                    try {
+                        if (isDateInCurrentMonth(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()))) {
+                            suma++;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return suma;
+            }
+
+            private boolean isDateInCurrentMonth(Date date) {
+                Calendar currentCalendar = Calendar.getInstance();
+                int month = currentCalendar.get(Calendar.MONTH);
+                int year = currentCalendar.get(Calendar.YEAR);
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(date);
+                int targetMonth = targetCalendar.get(Calendar.MONTH);
+                int targetYear = targetCalendar.get(Calendar.YEAR);
+                return month == targetMonth && year == targetYear;
+            }
+        });
+
+    }
 
 }

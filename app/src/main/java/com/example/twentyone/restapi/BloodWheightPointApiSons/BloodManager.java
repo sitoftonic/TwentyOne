@@ -3,6 +3,7 @@ package com.example.twentyone.restapi.BloodWheightPointApiSons;
 import android.util.Log;
 
 import com.example.twentyone.model.data.BloodPressure;
+import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.UserToken;
 import com.example.twentyone.restapi.BloodWeightPointDataApiManager;
 import com.example.twentyone.restapi.RestAPIService;
@@ -17,10 +18,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class BloodManager extends BloodWeightPointDataApiManager {
+
     public BloodManager(UserToken userToken, RestAPIService restApiService) {
         super(userToken, restApiService);
     }
-
+    /*
     protected synchronized void getAll(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level){
         Log.d("LRM", "all points GET request");
 
@@ -36,7 +38,8 @@ public class BloodManager extends BloodWeightPointDataApiManager {
                         getAll(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(genList);
+                        BloodPressure[] bloodPressures = new BloodPressure[1];
+                        bwpgpsdapiCallBack.onFinishedBloodCallback(bloodPressures);
                     }
                 } else {
                     bwpgpsdapiCallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
@@ -72,14 +75,16 @@ public class BloodManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            BloodPressure[] bloodPressures = new BloodPressure[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(bloodPressures);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        BloodPressure[] bloodPressures = new BloodPressure[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(bloodPressures);
                     }
 
                 } else {
@@ -116,14 +121,16 @@ public class BloodManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            BloodPressure[] bloodPressures = new BloodPressure[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(bloodPressures);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        BloodPressure[] bloodPressures = new BloodPressure[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(bloodPressures);
                     }
 
                 } else {
@@ -137,4 +144,5 @@ public class BloodManager extends BloodWeightPointDataApiManager {
             }
         });
     }
+    */
 }

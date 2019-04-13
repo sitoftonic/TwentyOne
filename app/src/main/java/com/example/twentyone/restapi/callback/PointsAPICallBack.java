@@ -3,6 +3,7 @@ package com.example.twentyone.restapi.callback;
 import com.example.twentyone.model.data.Points;
 import com.example.twentyone.model.data.PointsWeek;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface PointsAPICallBack extends RestAPICallBack{
@@ -10,5 +11,6 @@ public interface PointsAPICallBack extends RestAPICallBack{
     void onGetPoints(Points points);
     void onGetPointsWeek(PointsWeek pointsWeek);
     void onBadRequest();
-    void onFinishedCallback(List<Points> pointsList);
+    void onFinishedCallback(ArrayList<Points> pointsList);
+    void onFinishedGraphCallback(int value);
 }

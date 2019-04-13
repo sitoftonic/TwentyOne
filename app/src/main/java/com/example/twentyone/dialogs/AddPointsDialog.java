@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -112,6 +113,8 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     @Override
     public void onPostPoints(Points points) {
         Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_success, Snackbar.LENGTH_SHORT).show();
+        //RestAPIManager.getInstance().getAllPointsByUser(this,0);
+       // RestAPIManager.getInstance().getAllPointsByUser(this,0,new ArrayList<Points>());
     }
 
     @Override
@@ -130,7 +133,12 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     }
 
     @Override
-    public void onFinishedCallback(List<Points> pointsList) {
+    public void onFinishedCallback(ArrayList<Points> pointsList) {
+        // TODO: Call fragment - onCreate - to update points data
+    }
+
+    @Override
+    public void onFinishedGraphCallback(int value) {
 
     }
 

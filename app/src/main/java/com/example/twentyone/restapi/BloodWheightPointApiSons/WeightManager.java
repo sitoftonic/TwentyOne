@@ -22,6 +22,7 @@ public class WeightManager extends BloodWeightPointDataApiManager {
     public WeightManager(UserToken userToken, RestAPIService restApiService) {
         super(userToken, restApiService);
     }
+    /*
 
     protected synchronized void getAll(final BloodWeightPointsGPSDAPICallBack bwpgpsdapiCallBack, final int level){
         Log.d("LRM", "all points GET request");
@@ -38,7 +39,8 @@ public class WeightManager extends BloodWeightPointDataApiManager {
                         getAll(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(genList);
+                        Weight[] weights = new Weight[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(weights);
                     }
                 } else {
                     bwpgpsdapiCallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
@@ -74,14 +76,16 @@ public class WeightManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            Weight[] weights = new Weight[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(weights);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        Weight[] weights = new Weight[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(weights);
                     }
 
                 } else {
@@ -117,14 +121,16 @@ public class WeightManager extends BloodWeightPointDataApiManager {
                                 }
                                 break;
                             }
-                            bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                            Weight[] weights = new Weight[1];
+                            bwpgpsdapiCallBack.onFinishedCallback(weights);
                             return;
                         }
                         getGenListByUser.addAll(Arrays.asList(response.body()));
                         getAllByUser(bwpgpsdapiCallBack,level+1);
                     }
                     else{
-                        bwpgpsdapiCallBack.onFinishedCallback(getGenListByUser);
+                        Weight[] weights = new Weight[1];
+                        bwpgpsdapiCallBack.onFinishedCallback(weights);
                     }
 
                 } else {
@@ -138,4 +144,5 @@ public class WeightManager extends BloodWeightPointDataApiManager {
             }
         });
     }
+    */
 }

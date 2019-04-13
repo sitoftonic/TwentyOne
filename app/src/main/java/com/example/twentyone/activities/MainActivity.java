@@ -14,10 +14,10 @@ import android.view.MenuItem;
 
 import com.example.twentyone.R;
 import com.example.twentyone.dialogs.AboutDialog;
-import com.example.twentyone.fragments.AccountFragment;
-import com.example.twentyone.fragments.EntitiesFragment;
-import com.example.twentyone.fragments.HistoryFragment;
-import com.example.twentyone.fragments.HomeFragment;
+import com.example.twentyone.fragments.account.AccountFragment;
+import com.example.twentyone.fragments.entities.EntitiesFragment;
+import com.example.twentyone.fragments.history.HistoryFragment;
+import com.example.twentyone.fragments.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity{
