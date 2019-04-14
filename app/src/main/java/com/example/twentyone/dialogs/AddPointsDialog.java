@@ -58,12 +58,7 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
                 .setView(view)
                 .setPositiveButton(R.string.add_points_save, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        if (RestAPIManager.getLastDayAddedPoints() != Calendar.DAY_OF_YEAR) {
-                            savePoints();
-                        }
-                        else {
-                            Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_blocked, Snackbar.LENGTH_SHORT).show();
-                        }
+                        savePoints();
                     }
                 })
                 .setNegativeButton(R.string.add_points_cancel, new DialogInterface.OnClickListener() {

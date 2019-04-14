@@ -134,12 +134,7 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
         add_points.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (RestAPIManager.getLastDayAddedPoints() != Calendar.DAY_OF_YEAR) {
-                    new AddPointsDialog().show(getChildFragmentManager(), "dialog");
-                }
-                else {
-                    Snackbar.make(getActivity().findViewById(R.id.main_coordinator) , R.string.add_points_toast_blocked, Snackbar.LENGTH_SHORT).show();
-                }
+                new AddPointsDialog().show(getChildFragmentManager(), "dialog");
             }
         });
 

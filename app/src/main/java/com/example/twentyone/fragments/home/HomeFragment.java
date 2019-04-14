@@ -361,7 +361,11 @@ public class HomeFragment extends Fragment implements PointsAPICallBack {
     public void onFinished7LastDays(ArrayList<Integer> values) {
         // Hemos obtenido los puntos de los últimos 7 días
         // puestos de [0] hoy a [6] día más antiguo
-        initChartPoints(values);
+        ArrayList<Integer> puntos = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            puntos.add(0);
+        }
+        initChartPoints(puntos);
     }
 
     @Override

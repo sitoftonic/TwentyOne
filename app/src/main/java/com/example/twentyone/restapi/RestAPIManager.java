@@ -55,7 +55,6 @@ public class RestAPIManager {
     private static final String ERROR_RESET_KEY = "No user was found for this reset key";
     private static final String ERROR_KEY_EMAIL = "emailexists";
 
-    private static int lastDayAddedPoints = 0;
 
     private static RestAPIManager ourInstance;
     private Retrofit retrofit;
@@ -77,14 +76,6 @@ public class RestAPIManager {
                 .build();
         restApiService = retrofit.create(RestAPIService.class);
 
-    }
-
-    public static int getLastDayAddedPoints() {
-        return lastDayAddedPoints;
-    }
-
-    public static void setLastDayAddedPoints(int lastDayAddedPoints) {
-        RestAPIManager.lastDayAddedPoints = lastDayAddedPoints;
     }
 
     public synchronized void getUserToken(String username, String password, final LoginAPICallBack loginAPICallBack) {
@@ -120,7 +111,6 @@ public class RestAPIManager {
             public void onResponse(Call<Points> call, Response<Points> response) {
 
                 if (response.isSuccessful()) {
-                    lastDayAddedPoints = Calendar.DAY_OF_YEAR;
                     pointsAPICallBack.onPostPoints(response.body());
                 } else {
                     pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
