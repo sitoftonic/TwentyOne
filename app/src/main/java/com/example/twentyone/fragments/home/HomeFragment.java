@@ -350,6 +350,12 @@ public class HomeFragment extends Fragment implements PointsAPICallBack {
         // puestos de [0] hoy a [6] día más antiguo
         initChartPoints(values);
     }
+
+    @Override
+    public void onFinished7LastWeeks(ArrayList<Integer> values) {
+
+    }
+
     @Deprecated
     @Override
     public void onFailure(Throwable t) {
