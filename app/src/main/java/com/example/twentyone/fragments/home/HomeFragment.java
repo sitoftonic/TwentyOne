@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.twentyone.R;
@@ -50,8 +51,12 @@ public class HomeFragment extends Fragment implements PointsAPICallBack {
     private MaterialButton add_blood;
     private MaterialButton add_weight;
 
+    private ProgressBar progressPoints;
     private Chip chipPoints;
     private LineChart chartPoints;
+
+    private Chip chipBlood;
+    private LineChart chartBlood;
 
     private static final HomeFragment ourInstance = new HomeFragment();
 
@@ -83,6 +88,8 @@ public class HomeFragment extends Fragment implements PointsAPICallBack {
 
         user_text = view.findViewById(R.id.user_text);
 
+        progressPoints = view.findViewById(R.id.progressPoints);
+        RestAPIManager.getInstance().getPointsWeek(this);
         chartPoints = view.findViewById(R.id.chartPoints);
         chipPoints = view.findViewById(R.id.chipPoints);
 
@@ -128,6 +135,11 @@ public class HomeFragment extends Fragment implements PointsAPICallBack {
     }
 
     private void getBlood() {
+        ArrayList<Integer> points = new ArrayList<>(7);
+        for (int i = 0; i < 7; i++){
+            points.add(0);
+        }
+
 
     }
 
@@ -321,7 +333,8 @@ public class HomeFragment extends Fragment implements PointsAPICallBack {
     @Deprecated
     @Override
     public void onGetPointsWeek(PointsWeek pointsWeek) {
-
+        ((TextView)view.findViewById(R.id.tv_progress)).setText(pointsWeek.getPoints() + " / 21");
+        progressPoints.setProgress(pointsWeek.getPoints());
     }
     @Deprecated
     @Override
