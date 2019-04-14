@@ -15,4 +15,5 @@ public interface PointsAPICallBack extends RestAPICallBack{
     void onFinishedGraphCallback(int value);
     void onFinished7LastMonths(ArrayList<Integer> values);
     void onFinished7LastDays(ArrayList<Integer> values);
+    void onFinished7LastWeeks(ArrayList<Integer> values);
 }

@@ -150,6 +150,11 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
     }
 
     @Override
+    public void onFinished7LastWeeks(ArrayList<Integer> values) {
+
+    }
+
+    @Override
     public void onFailure(Throwable t) {
         Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_error, Snackbar.LENGTH_SHORT).show();
     }

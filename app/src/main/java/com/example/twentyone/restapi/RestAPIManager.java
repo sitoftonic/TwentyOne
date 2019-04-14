@@ -701,4 +701,61 @@ public class RestAPIManager {
 
     }
 
+
+    public synchronized void getPointsLast7Weeks(final PointsAPICallBack pointsAPICallBack, final int level, final ArrayList<Integer> valores){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        ArrayList<Integer> values = sumaWeek(pointsArrayList,valores);
+                        getPointsLast7Weeks(pointsAPICallBack,level+1,values);
+                    }
+                    else{
+                        pointsAPICallBack.onFinished7LastWeeks(valores);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private ArrayList<Integer> sumaWeek(ArrayList<Points> points, ArrayList<Integer> values) {
+                int value, todayWeek;
+                for (Points p : points) {
+                    todayWeek = Calendar.WEEK_OF_YEAR;
+                    try {
+                        for (int i = 0; i < 7; i++) {
+                            if (isDateInWeek(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()), todayWeek - i)) {
+                                value = values.get(i);
+                                values.add(i,++value);
+                            }
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return values;
+            }
+
+            private boolean isDateInWeek(Date dateOfPoint, int weekOfYear) {
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(dateOfPoint);
+                return targetCalendar.get(Calendar.WEEK_OF_YEAR) == weekOfYear;
+            }
+        });
+
+    }
+
 }
