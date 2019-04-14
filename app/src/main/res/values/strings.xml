@@ -211,5 +211,6 @@
     <!-- Puntos -->
     <string name="str_weekly">Weekly</string>
     <string name="str_monthly">Monthly</string>
+    <string name="str_connectionError">Connection error</string>
 
 </resources>

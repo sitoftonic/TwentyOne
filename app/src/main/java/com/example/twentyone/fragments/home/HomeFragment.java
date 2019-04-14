@@ -13,6 +13,10 @@ import com.example.twentyone.R;
 import com.example.twentyone.dialogs.AddBloodDialog;
 import com.example.twentyone.dialogs.AddPointsDialog;
 import com.example.twentyone.dialogs.AddWeightDialog;
+import com.example.twentyone.model.data.Points;
+import com.example.twentyone.model.data.PointsWeek;
+import com.example.twentyone.restapi.RestAPIManager;
+import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
@@ -26,6 +30,7 @@ import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
 
@@ -34,7 +39,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements PointsAPICallBack {
 
     public static final String TAG = HomeFragment.class.getSimpleName();
 
@@ -45,6 +50,7 @@ public class HomeFragment extends Fragment {
     private MaterialButton add_blood;
     private MaterialButton add_weight;
 
+    private Chip chipPoints;
     private LineChart chartPoints;
 
     private static final HomeFragment ourInstance = new HomeFragment();
@@ -76,6 +82,9 @@ public class HomeFragment extends Fragment {
     private void initView() {
 
         user_text = view.findViewById(R.id.user_text);
+
+        chartPoints = view.findViewById(R.id.chartPoints);
+        chipPoints = view.findViewById(R.id.chipPoints);
 
         String user = getArguments().getString("user");
 
@@ -123,84 +132,99 @@ public class HomeFragment extends Fragment {
     }
 
     private void getPoints() {
-        // Temporal
-        ArrayList<Integer> points = new ArrayList<>();
-        points.add(1);
-        points.add(3);
-        points.add(2);
-        points.add(3);
-        points.add(1);
-        points.add(0);
-        points.add(1);
-        initChartPoints(points);
+        ArrayList<Integer> points = new ArrayList<>(7);
+        for (int i = 0; i < 7; i++){
+            points.add(0);
+        }
+
+        RestAPIManager.getInstance().getPointsLast7Days(this, 0, points);
     }
 
     private void initChartPoints(ArrayList<Integer> points) {
-        chartPoints = view.findViewById(R.id.chartPoints);
+
+        if (noValues(points)){
+            // Ocultar gráfica
+            chartPoints.setVisibility(View.GONE);
+            // Mostrar chip
+            chipPoints.setVisibility(View.VISIBLE);
+        }else{
+            // Ocultar chip
+            chipPoints.setVisibility(View.GONE);
+
+            {   // // Chart Style // //
+                // background color
+                chartPoints.setBackgroundColor(Color.WHITE);
+
+                // disable description text
+                chartPoints.getDescription().setEnabled(false);
+
+                // enable touch gestures
+                chartPoints.setTouchEnabled(true);
+
+                // enable scaling and dragging
+                chartPoints.setDragEnabled(true);
+                chartPoints.setScaleEnabled(true);
+
+                // force pinch zoom along both axis
+                chartPoints.setPinchZoom(true);
+            }
+
+            XAxis xAxis;
+            {   // // X-Axis Style // //
+                xAxis = chartPoints.getXAxis();
+
+                // vertical grid lines
+                xAxis.enableGridDashedLine(10f, 10f, 0f);
+            }
+
+            YAxis yAxis;
+            {   // // Y-Axis Style // //
+                yAxis = chartPoints.getAxisLeft();
+
+                // disable dual axis (only use LEFT axis)
+                chartPoints.getAxisRight().setEnabled(false);
+
+                // horizontal grid lines
+                yAxis.enableGridDashedLine(10f, 10f, 0f);
+
+                // axis range
+                yAxis.setAxisMaximum(3);
+                yAxis.setAxisMinimum(0);
+            }
 
 
-        {   // // Chart Style // //
-            // background color
-            chartPoints.setBackgroundColor(Color.WHITE);
+            // add data
+            setDataPoints(points);
 
-            // disable description text
-            chartPoints.getDescription().setEnabled(false);
 
-            // enable touch gestures
-            chartPoints.setTouchEnabled(true);
+            // get the legend (only possible after setting data)
+            Legend l = chartPoints.getLegend();
 
-            // enable scaling and dragging
-            chartPoints.setDragEnabled(true);
-            chartPoints.setScaleEnabled(true);
+            // draw legend entries as lines
+            l.setForm(Legend.LegendForm.LINE);
 
-            // force pinch zoom along both axis
-            chartPoints.setPinchZoom(true);
+            LegendEntry[] entries = new LegendEntry[1];
+            entries[0] = new LegendEntry();
+            entries[0].label = "Points for last 7 days";
+            l.setCustom(entries);
+
+            // Mostrar gráfica
+            chartPoints.setVisibility(View.VISIBLE);
         }
+    }
 
-        XAxis xAxis;
-        {   // // X-Axis Style // //
-            xAxis = chartPoints.getXAxis();
-
-            // vertical grid lines
-            xAxis.enableGridDashedLine(10f, 10f, 0f);
+    private boolean noValues(ArrayList<Integer> points) {
+        for (Integer n : points) {
+            if (n != 0)
+                return false;
         }
-
-        YAxis yAxis;
-        {   // // Y-Axis Style // //
-            yAxis = chartPoints.getAxisLeft();
-
-            // disable dual axis (only use LEFT axis)
-            chartPoints.getAxisRight().setEnabled(false);
-
-            // horizontal grid lines
-            yAxis.enableGridDashedLine(10f, 10f, 0f);
-
-            // axis range
-            yAxis.setAxisMaximum(3);
-            yAxis.setAxisMinimum(0);
-        }
-
-
-        // add data
-        setDataPoints(points);
-
-
-        // get the legend (only possible after setting data)
-        Legend l = chartPoints.getLegend();
-
-        // draw legend entries as lines
-        l.setForm(Legend.LegendForm.LINE);
-
-        LegendEntry[] entries = new LegendEntry[1];
-        entries[0] = new LegendEntry();
-        entries[0].label = "Points for last 7 days";
-        l.setCustom(entries);
+        return true;
     }
 
     private void setDataPoints(ArrayList<Integer> points) {
         ArrayList<Entry> values = new ArrayList<>();
 
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = points.size() - 1; i >= 0; i--) {
             values.add(new Entry(i, points.get(i)));
         }
 
@@ -282,6 +306,58 @@ public class HomeFragment extends Fragment {
     private void initChartWeight() {
         chartPoints = view.findViewById(R.id.chartPoints);
 
+    }
+
+    @Deprecated
+    @Override
+    public void onPostPoints(Points points) {
+
+    }
+    @Deprecated
+    @Override
+    public void onGetPoints(Points points) {
+
+    }
+    @Deprecated
+    @Override
+    public void onGetPointsWeek(PointsWeek pointsWeek) {
+
+    }
+    @Deprecated
+    @Override
+    public void onBadRequest() {
+
+    }
+    @Deprecated
+    @Override
+    public void onFinishedCallback(ArrayList<Points> pointsList) {
+
+    }
+    @Deprecated
+    @Override
+    public void onFinishedGraphCallback(int value) {
+
+    }
+    @Deprecated
+    @Override
+    public void onFinished7LastMonths(ArrayList<Integer> values) {
+
+    }
+    @Deprecated
+    @Override
+    public void onFinished7LastDays(ArrayList<Integer> values) {
+        // Hemos obtenido los puntos de los últimos 7 días
+        // puestos de [0] hoy a [6] día más antiguo
+        initChartPoints(values);
+    }
+    @Deprecated
+    @Override
+    public void onFailure(Throwable t) {
+        // Ocultar todos los gráficos
+        chartPoints.setVisibility(View.GONE);
+        // Mostrar todos los chips
+        chipPoints.setText(getString(R.string.str_connectionError));
+        chipPoints.setVisibility(View.VISIBLE);
     }
 
     // TODO: OnDataRequiredFailed para mostrar los chips y no los gráficos
