@@ -21,6 +21,7 @@ import com.example.twentyone.restapi.callback.WeightAPICallBack;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -820,4 +821,60 @@ public class RestAPIManager {
 
     }
 
+
+    public synchronized void getWeightLast7Days(final WeightAPICallBack weightAPICallBack, final int level, final ArrayList<Integer> valores){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Weight[]> call = restApiService.getAllWeight("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Weight[]>() {
+            @Override
+            public void onResponse(Call<Weight[]> call, Response<Weight[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Weight> weightsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        ArrayList<Integer> values = sumaDay(weightsArrayList,valores);
+                        getWeightLast7Days(weightAPICallBack,level+1,values);
+                    }
+                    else{
+                        weightAPICallBack.onFinished7LastDays(valores);
+                    }
+                } else {
+                    weightAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Weight[]> call, Throwable t) {
+                weightAPICallBack.onFailure(t);
+            }
+
+            private ArrayList<Integer> sumaDay(ArrayList<Weight> weights, ArrayList<Integer> values) {
+                int value, todayDay;
+                for (Weight w : weights) {
+                    todayDay = Calendar.DAY_OF_YEAR;
+                    try {
+                        for (int i = 0; i < 7; i++) {
+                            if (isDateInDay(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(new Date(w.getTimestamp().getTime()).toString()), todayDay - i)) {
+                                value = values.get(i);
+                                values.add(i,++value);
+                            }
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return values;
+            }
+
+            private boolean isDateInDay(Date dateOfPoint, int dayOfYear) {
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(dateOfPoint);
+                return targetCalendar.get(Calendar.DAY_OF_YEAR) == dayOfYear;
+            }
+        });
+
+    }
 }
