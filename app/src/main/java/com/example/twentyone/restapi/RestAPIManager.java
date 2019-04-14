@@ -508,6 +508,12 @@ public class RestAPIManager {
             }
 
             private boolean isDateInCurrentWeek(Date date) {
+                /*
+                long DAY_IN_MS = 1000 * 60 * 60 * 24;
+                Date d = new Date(System.currentTimeMillis() - (7 * DAY_IN_MS));
+                return date.getTime() >= d.getTime() && date.getTime() <= (new Date(System.currentTimeMillis())).getTime();
+                */
+
                 Calendar currentCalendar = Calendar.getInstance();
                 int week = currentCalendar.get(Calendar.WEEK_OF_YEAR);
                 int year = currentCalendar.get(Calendar.YEAR);
@@ -573,6 +579,123 @@ public class RestAPIManager {
                 int targetMonth = targetCalendar.get(Calendar.MONTH);
                 int targetYear = targetCalendar.get(Calendar.YEAR);
                 return month == targetMonth && year == targetYear;
+            }
+        });
+
+    }
+
+
+    public synchronized void getPointsLast7Months(final PointsAPICallBack pointsAPICallBack, final int level, final ArrayList<Integer> valores){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        ArrayList<Integer> values = sumaMonth(pointsArrayList,valores);
+                        getPointsLast7Months(pointsAPICallBack,level+1,values);
+                    }
+                    else{
+                        pointsAPICallBack.onFinished7LastMonths(valores);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private ArrayList<Integer> sumaMonth(ArrayList<Points> points, ArrayList<Integer> values) {
+                int value, todayMonth;
+                for (Points p : points) {
+                    todayMonth = Calendar.MONTH;
+                    try {
+                        for (int i = 0; i < 7; i++) {
+                            if (todayMonth - i <= 0) {
+                                todayMonth = 12 + i;
+                            }
+                            if (isDateInMonth(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()), (todayMonth - i) % 13)) {
+                                value = values.get(i);
+                                values.add(i,++value);
+                            }
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return values;
+            }
+
+            private boolean isDateInMonth(Date dateOfPoint, int month) {
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(dateOfPoint);
+                return targetCalendar.get(Calendar.MONTH) == month;
+            }
+        });
+
+    }
+
+
+    public synchronized void getPointsLast7Days(final PointsAPICallBack pointsAPICallBack, final int level, final ArrayList<Integer> valores){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        ArrayList<Integer> values = sumaDay(pointsArrayList,valores);
+                        getPointsLast7Days(pointsAPICallBack,level+1,values);
+                    }
+                    else{
+                        pointsAPICallBack.onFinished7LastDays(valores);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private ArrayList<Integer> sumaDay(ArrayList<Points> points, ArrayList<Integer> values) {
+                int value, todayDay;
+                for (Points p : points) {
+                    todayDay = Calendar.DAY_OF_YEAR;
+                    try {
+                        for (int i = 0; i < 7; i++) {
+                            if (isDateInDay(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()), todayDay - i)) {
+                                value = values.get(i);
+                                values.add(i,++value);
+                            }
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return values;
+            }
+
+            private boolean isDateInDay(Date dateOfPoint, int dayOfYear) {
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(dateOfPoint);
+                return targetCalendar.get(Calendar.DAY_OF_YEAR) == dayOfYear;
             }
         });
 
