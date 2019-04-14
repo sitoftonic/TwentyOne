@@ -133,6 +133,7 @@
     <string name="add_points_delete">Delete</string>
     <string name="add_points_toast_success">Points Added Successfully</string>
     <string name="add_points_toast_error">Error Adding Points</string>
+    <string name="add_points_toast_blocked">Error: You can only add points once a day</string>
 
     <!--Blood Presure-->
     <string name="blood_search">Search for Blood Pressure</string>

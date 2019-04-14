@@ -58,7 +58,12 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
                 .setView(view)
                 .setPositiveButton(R.string.add_points_save, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        savePoints();
+                        if (RestAPIManager.getLastDayAddedPoints() != Calendar.DAY_OF_YEAR) {
+                            savePoints();
+                        }
+                        else {
+                            Snackbar.make(activity.findViewById(R.id.main_coordinator) , R.string.add_points_toast_blocked, Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.add_points_cancel, new DialogInterface.OnClickListener() {
@@ -104,7 +109,6 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
         final String notes = notes_text.getText().toString();
 
         Log.i("ADD-POINTS", "Date: " + date + " Exercise: " + s_exercise + " Eat: " + s_eat + " Drink: " + s_drink + " Notes: " + notes);
-
         RestAPIManager.getInstance().postPoints(new Points(date, s_exercise, s_eat, s_drink, notes),this);
     }
 
@@ -146,6 +150,11 @@ public class AddPointsDialog extends DialogFragment implements PointsAPICallBack
 
     @Override
     public void onFinished7LastDays(ArrayList<Integer> values) {
+
+    }
+
+    @Override
+    public void onFinished7LastWeeks(ArrayList<Integer> values) {
 
     }
 

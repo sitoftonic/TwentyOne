@@ -21,6 +21,7 @@ import com.example.twentyone.restapi.callback.WeightAPICallBack;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -53,6 +54,8 @@ public class RestAPIManager {
     private static final String ERROR_RESET_KEY = "No user was found for this reset key";
     private static final String ERROR_KEY_EMAIL = "emailexists";
 
+    private static int lastDayAddedPoints = 0;
+
     private static RestAPIManager ourInstance;
     private Retrofit retrofit;
     private RestAPIService restApiService;
@@ -73,6 +76,10 @@ public class RestAPIManager {
                 .build();
         restApiService = retrofit.create(RestAPIService.class);
 
+    }
+
+    public static int getLastDayAddedPoints() {
+        return lastDayAddedPoints;
     }
 
     public synchronized void getUserToken(String username, String password, final LoginAPICallBack loginAPICallBack) {
@@ -108,6 +115,7 @@ public class RestAPIManager {
             public void onResponse(Call<Points> call, Response<Points> response) {
 
                 if (response.isSuccessful()) {
+                    lastDayAddedPoints = Calendar.DAY_OF_YEAR;
                     pointsAPICallBack.onPostPoints(response.body());
                 } else {
                     pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
@@ -701,4 +709,179 @@ public class RestAPIManager {
 
     }
 
+
+    public synchronized void getPointsLast7Weeks(final PointsAPICallBack pointsAPICallBack, final int level, final ArrayList<Integer> valores){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Points[]> call = restApiService.getAllPoints("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Points[]>() {
+            @Override
+            public void onResponse(Call<Points[]> call, Response<Points[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Points> pointsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        ArrayList<Integer> values = sumaWeek(pointsArrayList,valores);
+                        getPointsLast7Weeks(pointsAPICallBack,level+1,values);
+                    }
+                    else{
+                        pointsAPICallBack.onFinished7LastWeeks(valores);
+                    }
+                } else {
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points[]> call, Throwable t) {
+                pointsAPICallBack.onFailure(t);
+            }
+
+            private ArrayList<Integer> sumaWeek(ArrayList<Points> points, ArrayList<Integer> values) {
+                int value, todayWeek;
+                for (Points p : points) {
+                    todayWeek = Calendar.WEEK_OF_YEAR;
+                    try {
+                        for (int i = 0; i < 7; i++) {
+                            if (isDateInWeek(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()), todayWeek - i)) {
+                                value = values.get(i);
+                                values.add(i,++value);
+                            }
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return values;
+            }
+
+            private boolean isDateInWeek(Date dateOfPoint, int weekOfYear) {
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(dateOfPoint);
+                return targetCalendar.get(Calendar.WEEK_OF_YEAR) == weekOfYear;
+            }
+        });
+
+    }
+
+
+    public synchronized void getAllBloodByUser(final BloodAPICallBack bloodAPICallBack, final int level, final ArrayList<BloodPressure> bloodPressures){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<BloodPressure[]> call = restApiService.getAllBloodPressure("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<BloodPressure[]>() {
+            @Override
+            public void onResponse(Call<BloodPressure[]> call, Response<BloodPressure[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        bloodPressures.addAll(Arrays.asList(response.body()));
+                        getAllBloodByUser(bloodAPICallBack,level+1,bloodPressures);
+                    }
+                    else{
+                        bloodAPICallBack.onFinishedCallback(bloodPressures);
+                    }
+                } else {
+                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure[]> call, Throwable t) {
+                bloodAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
+
+    public synchronized void getAllWeightByUser(final WeightAPICallBack weightAPICallBack, final int level, final ArrayList<Weight> weights){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Weight[]> call = restApiService.getAllWeightByUser("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Weight[]>() {
+            @Override
+            public void onResponse(Call<Weight[]> call, Response<Weight[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        weights.addAll(Arrays.asList(response.body()));
+                        getAllWeightByUser(weightAPICallBack,level+1,weights);
+                    }
+                    else{
+                        weightAPICallBack.onFinishedCallback(weights);
+                    }
+                } else {
+                    weightAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Weight[]> call, Throwable t) {
+                weightAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
+
+    public synchronized void getWeightLast7Days(final WeightAPICallBack weightAPICallBack, final int level, final ArrayList<Integer> valores){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Weight[]> call = restApiService.getAllWeight("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Weight[]>() {
+            @Override
+            public void onResponse(Call<Weight[]> call, Response<Weight[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        ArrayList<Weight> weightsArrayList = new ArrayList<>(Arrays.asList(response.body()));
+                        ArrayList<Integer> values = sumaDay(weightsArrayList,valores);
+                        getWeightLast7Days(weightAPICallBack,level+1,values);
+                    }
+                    else{
+                        weightAPICallBack.onFinished7LastDays(valores);
+                    }
+                } else {
+                    weightAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Weight[]> call, Throwable t) {
+                weightAPICallBack.onFailure(t);
+            }
+
+            private ArrayList<Integer> sumaDay(ArrayList<Weight> weights, ArrayList<Integer> values) {
+                int value, todayDay;
+                for (Weight w : weights) {
+                    todayDay = Calendar.DAY_OF_YEAR;
+                    try {
+                        for (int i = 0; i < 7; i++) {
+                            if (isDateInDay(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(new Date(w.getTimestamp().getTime()).toString()), todayDay - i)) {
+                                value = values.get(i);
+                                values.add(i,++value);
+                            }
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return values;
+            }
+
+            private boolean isDateInDay(Date dateOfPoint, int dayOfYear) {
+                Calendar targetCalendar = Calendar.getInstance();
+                targetCalendar.setTime(dateOfPoint);
+                return targetCalendar.get(Calendar.DAY_OF_YEAR) == dayOfYear;
+            }
+        });
+
+    }
 }

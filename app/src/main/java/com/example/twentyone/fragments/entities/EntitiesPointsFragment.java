@@ -249,6 +249,11 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
                 }
 
                 @Override
+                public void onFinished7LastWeeks(ArrayList<Integer> values) {
+
+                }
+
+                @Override
                 public void onFailure(Throwable t) {
 
                 }
@@ -274,6 +279,11 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
 
     @Override
     public void onFinished7LastDays(ArrayList<Integer> values) {
+
+    }
+
+    @Override
+    public void onFinished7LastWeeks(ArrayList<Integer> values) {
 
     }
 
