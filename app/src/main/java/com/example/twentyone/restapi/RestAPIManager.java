@@ -1,5 +1,6 @@
 package com.example.twentyone.restapi;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.twentyone.model.data.BloodPressure;
@@ -80,6 +81,10 @@ public class RestAPIManager {
 
     public static int getLastDayAddedPoints() {
         return lastDayAddedPoints;
+    }
+
+    public static void setLastDayAddedPoints(int lastDayAddedPoints) {
+        RestAPIManager.lastDayAddedPoints = lastDayAddedPoints;
     }
 
     public synchronized void getUserToken(String username, String password, final LoginAPICallBack loginAPICallBack) {
@@ -683,15 +688,16 @@ public class RestAPIManager {
 
             private ArrayList<Integer> sumaDay(ArrayList<Points> points, ArrayList<Integer> values) {
                 int value, todayDay;
-                for (Points p : points) {
-                    todayDay = Calendar.DAY_OF_YEAR;
+                for (int i = 0; i < 7; i++) {
+                    todayDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+                    value = 0;
                     try {
-                        for (int i = 0; i < 7; i++) {
-                            if (isDateInDay(new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE).parse(p.getDate()), todayDay - i)) {
-                                value = values.get(i);
-                                values.add(i,++value);
+                        for (Points p : points) {
+                            if (isDateInDay(new SimpleDateFormat("yyyy-MM-dd",Locale.FRANCE).parse(p.getDate()), todayDay - i)) {
+                                value++;
                             }
                         }
+                        values.set(i,value);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -884,4 +890,6 @@ public class RestAPIManager {
         });
 
     }
+
+
 }

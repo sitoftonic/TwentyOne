@@ -20,10 +20,12 @@ import com.example.twentyone.model.data.PointsWeek;
 import com.example.twentyone.restapi.RestAPIManager;
 import com.example.twentyone.restapi.callback.PointsAPICallBack;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -132,7 +134,12 @@ public class EntitiesPointsFragment extends Fragment implements PointsAPICallBac
         add_points.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AddPointsDialog().show(getChildFragmentManager(), "dialog");
+                if (RestAPIManager.getLastDayAddedPoints() != Calendar.DAY_OF_YEAR) {
+                    new AddPointsDialog().show(getChildFragmentManager(), "dialog");
+                }
+                else {
+                    Snackbar.make(getActivity().findViewById(R.id.main_coordinator) , R.string.add_points_toast_blocked, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
 
