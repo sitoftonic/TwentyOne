@@ -93,7 +93,7 @@
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/chartPoints"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="150dp"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/add_points_button"
@@ -136,7 +136,8 @@
                         android:layout_height="wrap_content"
                         app:chipIcon="@drawable/ic_round_error_outline_24px"
                         android:text="@string/home_blood_empty"
-                        android:layout_margin="8dp"/>
+                        android:layout_margin="8dp"
+                        android:visibility="gone"/>
 
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/chartBlood"
