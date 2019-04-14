@@ -758,4 +758,66 @@ public class RestAPIManager {
 
     }
 
+
+    public synchronized void getAllBloodByUser(final BloodAPICallBack bloodAPICallBack, final int level, final ArrayList<BloodPressure> bloodPressures){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<BloodPressure[]> call = restApiService.getAllBloodPressure("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<BloodPressure[]>() {
+            @Override
+            public void onResponse(Call<BloodPressure[]> call, Response<BloodPressure[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        bloodPressures.addAll(Arrays.asList(response.body()));
+                        getAllBloodByUser(bloodAPICallBack,level+1,bloodPressures);
+                    }
+                    else{
+                        bloodAPICallBack.onFinishedCallback(bloodPressures);
+                    }
+                } else {
+                    bloodAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BloodPressure[]> call, Throwable t) {
+                bloodAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
+
+    public synchronized void getAllWeightByUser(final WeightAPICallBack weightAPICallBack, final int level, final ArrayList<Weight> weights){
+        Log.d("LRM", "all points GET request");
+
+        Map<String,String> data = new HashMap<>();
+        data.put("page",String.valueOf(level));
+        Call<Weight[]> call = restApiService.getAllWeightByUser("Bearer " + userToken.getIdToken(),data);
+        call.enqueue(new Callback<Weight[]>() {
+            @Override
+            public void onResponse(Call<Weight[]> call, Response<Weight[]> response) {
+                if (response.isSuccessful()) {
+                    if(response.body().length > 0){
+                        weights.addAll(Arrays.asList(response.body()));
+                        getAllWeightByUser(weightAPICallBack,level+1,weights);
+                    }
+                    else{
+                        weightAPICallBack.onFinishedCallback(weights);
+                    }
+                } else {
+                    weightAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Weight[]> call, Throwable t) {
+                weightAPICallBack.onFailure(t);
+            }
+        });
+
+    }
+
 }
