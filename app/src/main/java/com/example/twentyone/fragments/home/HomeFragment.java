@@ -23,6 +23,7 @@ public class HomeFragment extends Fragment {
 
     public static final String TAG = HomeFragment.class.getSimpleName();
 
+    private View view;
     private TextView user_text;
 
     private MaterialButton add_points;
@@ -30,8 +31,6 @@ public class HomeFragment extends Fragment {
     private MaterialButton add_weight;
 
     private LineChart chartPoints;
-    private RadioGroup radioGroup;
-    private RadioButton radioButtonChecked;
 
     private static final HomeFragment ourInstance = new HomeFragment();
 
@@ -52,23 +51,16 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        initView(view);
+        initView();
 
         return view;
     }
 
-    private void initView(View view) {
+    private void initView() {
 
         user_text = view.findViewById(R.id.user_text);
-
-        radioGroup = view.findViewById(R.id.radioGroupPoints);
-        radioButtonChecked = view.findViewById(radioGroup.getCheckedRadioButtonId());
-
-        initChartPoints(view);
-
-        radioGroup.setOnCheckedChangeListener(new PointsRadioButtonsListener(chartPoints));
 
         String user = getArguments().getString("user");
 
@@ -100,9 +92,38 @@ public class HomeFragment extends Fragment {
                 new AddWeightDialog().show(getChildFragmentManager(), "weight_dialog");
             }
         });
+
+        getPoints();
+        //getBlood();
+        //getWeight();
+
     }
 
-    private void initChartPoints(View view) {
+    private void getWeight() {
+
+    }
+
+    private void getBlood() {
+
+    }
+
+    private void getPoints() {
+
+    }
+
+    private void initChartPoints() {
+        chartPoints = view.findViewById(R.id.chartPoints);
+
+
+    }
+
+    private void initChartBlood() {
+        chartPoints = view.findViewById(R.id.chartPoints);
+
+
+    }
+
+    private void initChartWeight() {
         chartPoints = view.findViewById(R.id.chartPoints);
 
 
